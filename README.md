@@ -1,21 +1,22 @@
 # Josephine's ReadMe for Chain-of-Exemplar
-# WHAT JOSEPHINE HAS DONE THUS FAR: 
-[x]: Connect to HPC through VSCODE
-[x]: First Commit + Push of the papers github to ours
-[x]: Environment setup
-[x]: Git setup
-[x]: Commit + Push Git Setup 
-[x]: Create Personal ReadMe
-[x]: Add to Group ReadMe
+## WHAT JOSEPHINE HAS DONE THUS FAR: 
+- [x] Connect to HPC through VSCODE
+- [x] First Commit + Push of the papers github to ours
+- [x] Environment setup
+- [x] Git setup
+- [x] Commit + Push Git Setup 
+- [x] Create Personal ReadMe
+- [x] Add to Group ReadMe
+      
+---
+## TO BE COMPLETED THROUGHOUT SUBMISSIONS: 
+### Model Description: Not yet applicable
+### Installation Instructions: Not yet applicable
+### Usage Instructions: Below
+### Expected Output: Not yet applicable
+### Member Contributions: Not yet applicable
 
-
-## Model Description: Not yet applicable
-## Installation Instructions: Not yet applicable
-## Usage Instructions: Below
-## Expected Output: Not yet applicable
-## Member Contributions: Not yet applicable
-
-
+---
 
 ## HPC Environment Setup
 
