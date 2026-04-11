@@ -1,15 +1,112 @@
-# Chain-of-Exemplar
+# Josephine's ReadMe for Chain-of-Exemplar
+# WHAT JOSEPHINE HAS DONE THUS FAR: 
+[x]: Connect to HPC through VSCODE
+[x]: First Commit + Push of the papers github to ours
+[x]: Environment setup
+[x]: Git setup
+[x]: Commit + Push Git Setup 
+[x]: Create Personal ReadMe
+[x]: Add to Group ReadMe
 
-This is the ReadMe file
 
-A clear and concise README file must be included. It should contain:
-Model Description: A short overview of the problem and your solution.
-Installation Instructions: List dependencies and how to install them.
-Usage Instructions: How to run the main script and reproduce the results.
-Expected Output: Example results or sample output.
-Member Contributions: Clearly state each member contribution
+## Model Description: Not yet applicable
+## Installation Instructions: Not yet applicable
+## Usage Instructions: Below
+## Expected Output: Not yet applicable
+## Member Contributions: Not yet applicable
 
-Examples of README files:
-Github: MentorQA, CLIP, MultilingualCLIP
-Hugging Face: Datasets: MemeXGen, MulticulturalGenAI, MentorQA, more..
-Demo: MemeXGen, more..
+
+
+## HPC Environment Setup
+
+### Step 1. Connect to HPC and request GPU
+
+```bash
+ssh your_username@login01
+srun -p gpu --gres=gpu:1 --time=02:00:00 --pty bash
+```
+
+Verify GPU:
+
+```bash
+nvidia-smi
+```
+
+### Step 2. Load Anaconda
+
+```bash
+module purge
+module load Anaconda3
+```
+
+### Step 3. Create environment in project storage (IMPORTANT TO NOT EXCEED STORAGE QUOTA)
+
+```bash
+conda create --prefix /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu python=3.10 -y
+conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
+```
+
+### Step 4. Install PyTorch (GPU version)
+
+Use **pip** (avoids HPC library conflicts):
+
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+Verify:
+
+```bash
+python -c "import torch; print(torch.cuda.is_available())"
+```
+
+**Expected output:** `True`
+
+### Step 5. Install required libraries
+
+Only install these and not entire requirements: 
+
+```bash
+pip install transformers datasets tqdm peft
+```
+
+---
+
+## Git Setup for HPC
+
+### Step 1. Create `.gitignore`
+
+Create or edit `.gitignore` (e.g. `nano .gitignore`) and add:
+
+```gitignore
+# Virtual environments
+venv/
+reproduction/Chain-of-Exemplar/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs and env files
+*.log
+.env
+
+# Data / outputs
+outputs/
+data/
+.cache/
+
+# Model files
+*.pt
+*.bin
+```
+
+In **nano**: save with `Ctrl + O` → Enter → exit with `Ctrl + X`.
+
+### Step 2. Commit `.gitignore`
+
+```bash
+git add .gitignore
+git commit -m "add gitignore to ignore venv"
+git push
+```
