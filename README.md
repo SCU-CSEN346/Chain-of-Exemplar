@@ -1,15 +1,26 @@
-# Chain-of-Exemplar
+# README: Chain-of-Exemplar    
+---
+## Model Description: A short overview of the problem and your solution.
+---
+## Installation Instructions: List dependencies and how to install them.
+---
+## Usage Instructions: How to run the main script and reproduce the results.
+---
+## Expected Output: Example results or sample output.
+---
+## Member Contributions: 
 
-This is the ReadMe file
+### JOSEPHINE: 
+- [x] Connect to HPC through VSCODE
+- [x] First Commit + Push of the papers github to ours
+- [x] Environment setup
+- [x] Git setup
+- [x] Commit + Push Git Setup 
+- [x] Create Personal ReadMe
+- [x] Add to Group ReadMe
 
-A clear and concise README file must be included. It should contain:
-Model Description: A short overview of the problem and your solution.
-Installation Instructions: List dependencies and how to install them.
-Usage Instructions: How to run the main script and reproduce the results.
-Expected Output: Example results or sample output.
-Member Contributions: Clearly state each member contribution
+### TARA: 
+- [x] complete
 
-Examples of README files:
-Github: MentorQA, CLIP, MultilingualCLIP
-Hugging Face: Datasets: MemeXGen, MulticulturalGenAI, MentorQA, more..
-Demo: MemeXGen, more..
+### KAJAL: 
+- [x] complete
