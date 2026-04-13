@@ -1,6 +1,10 @@
 # README: Chain-of-Exemplar    
 ---
 ## Model Description: A short overview of the problem and your solution.
+Option 2 - Improving upon Chain of Exemplar [Luo et. al. 2024](https://aclanthology.org/2024.acl-long.432.pdf)
+
+This project aims to address the lack of generated question diversity and mitigate hallucinations in the Chain of Exemplar model through in-context unsupervised learning, self-consistency, and potentially other methods that we come across throughout the quarter.
+
 ---
 ## Installation Instructions: List dependencies and how to install them.
 ---
