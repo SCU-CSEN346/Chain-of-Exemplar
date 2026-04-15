@@ -34,7 +34,10 @@ In progress - will fill in once we are able to get a baseline
 - [x] Set up conda environment + documenting setup locally
 - [x] Working on getting baseline to work on HPC
 - [x] Model description in Group ReadMe
-- [x] Wrote Automatic Multiple Choice Question Generation (2.1) and Self-Consistency (2.3) subsections in Related Works section in paper 
+- [x] Wrote Automatic Multiple Choice Question Generation (2.1) and Self-Consistency (2.4) subsections in Related Works section in paper 
 
 ### KAJAL - 33.3%: 
-- [x] complete
+- [x] First commit + Push of main papers github to this repo
+- [x] Not using HPC, setup done locally
+- [x] Completed the Abstract, Introduction, Chain-of-Thought Reasoning (2.3), and Multimodal Learning for Educational
+NLP (2.5) subsections in the Related Work section in the overleaf document.
