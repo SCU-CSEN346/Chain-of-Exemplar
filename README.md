@@ -14,7 +14,7 @@ This project aims to address the lack of generated question diversity and mitiga
 ---
 ## Member Contributions: 
 
-### JOSEPHINE: 
+### JOSEPHINE - 33.3%: 
 - [x] Connect to HPC through VSCODE
 - [x] First Commit + Push of the papers github to ours
 - [x] Environment setup
@@ -23,8 +23,8 @@ This project aims to address the lack of generated question diversity and mitiga
 - [x] Create Personal ReadMe
 - [x] Add to Group ReadMe
 
-### TARA: 
+### TARA - 33.3%: 
 - [x] complete
 
-### KAJAL: 
+### KAJAL - 33.3%: 
 - [x] complete
