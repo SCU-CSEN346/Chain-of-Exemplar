@@ -25,7 +25,7 @@ In progress - will fill in once we are able to get a baseline
 - [x] Clone main branch to personal branch (Josephine)
 - [x] Environment setup
 - [x] Git setup (Commit + Push Git Setup)
-- [x] Create Personal ReadMe + Add to Group ReadM eorganization
+- [x] Create Personal ReadMe with setup documentation + Add to Group ReadMe organization
 - [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
 
 ### TARA - 33.3%: 
