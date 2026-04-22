@@ -96,6 +96,8 @@ This confirms:
 ## Usage Instructions: How to run the main script and reproduce the results.
 Load the dataset - [Dataset](https://huggingface.co/datasets/Lhh123/CoE_ScienceQA)
 
+Dataset setup has been started using the authors’ released CoE ScienceQA dataset. Full loading and preprocessing instructions will be added after baseline dataset integration is finalized.
+
 In progress - will fill in once we are able to get a baseline
 
 ---
@@ -122,6 +124,13 @@ In progress - will fill in once we are able to get a baseline
 
 ### KAJAL - 33.3%: 
 - [x] First commit + Push of main papers github to this repo
-- [x] Not using HPC, setup done locally
+- [x] Not using HPC, Local WSL + GPU environment setup completed
 - [x] Completed the Abstract, Introduction, Chain-of-Thought Reasoning (2.3), and Multimodal Learning for Educational
 NLP (2.5) subsections in the Related Work section in the overleaf document.
+- [x] Fixed broken requirements.txt and resolved multiple dependency and version conflicts
+- [x] Created run_baseline.py and successfully ran baseline GPU inference
+- [x] Replaced unavailable original base model with Qwen/Qwen-1_8B-Chat
+- [x] Verified baseline text generation with sample prompt-output pair
+- [x] Set up Hugging Face authentication and confirmed model downloading/inference workflow
+- [x] Added reproducibility/setup documentation and .gitignore
+- [x] Began setup of authors’ CoE ScienceQA dataset and confirmed local dataset structure (train/, val/, test/, captions.json)
