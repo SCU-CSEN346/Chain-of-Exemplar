@@ -87,6 +87,10 @@ Please generate a question from the corresponding answer.
 ```text
 What is the force of gravity that attracts two objects with mass towards each other?
 ```
+This confirms:
+- successful model loading
+- GPU-based inference
+- functional text generation pipeline
 
 ---
 ## Usage Instructions: How to run the main script and reproduce the results.
