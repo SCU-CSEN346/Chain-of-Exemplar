@@ -94,6 +94,8 @@ This confirms:
 
 ---
 ## Usage Instructions: How to run the main script and reproduce the results.
+Load the dataset - [Dataset](https://huggingface.co/datasets/Lhh123/CoE_ScienceQA)
+
 In progress - will fill in once we are able to get a baseline
 
 ---
