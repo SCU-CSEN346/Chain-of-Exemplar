@@ -131,6 +131,7 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Created run_baseline.py and successfully ran baseline GPU inference
 - [x] Replaced unavailable original base model with Qwen/Qwen-1_8B-Chat
 - [x] Verified baseline text generation with sample prompt-output pair
+- [x] Added the installation instructions to the group ReadMe file 
 - [x] Set up Hugging Face authentication and confirmed model downloading/inference workflow
 - [x] Added reproducibility/setup documentation and .gitignore
 - [x] Began setup of authors’ CoE ScienceQA dataset and confirmed local dataset structure (train/, val/, test/, captions.json)
