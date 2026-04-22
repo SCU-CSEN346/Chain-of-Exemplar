@@ -1,12 +1,11 @@
 # Josephine's ReadMe for Chain-of-Exemplar
 ## WHAT JOSEPHINE HAS DONE THUS FAR: 
-- [x] Connect to HPC through VSCODE
-- [x] First Commit + Push of the papers github to ours
+- [x] Set up project in HPC with VSCODE
+- [x] Clone main branch to personal branch (Josephine)
 - [x] Environment setup
-- [x] Git setup
-- [x] Commit + Push Git Setup 
-- [x] Create Personal ReadMe
-- [x] Add to Group ReadMe
+- [x] Git setup (Commit + Push Git Setup)
+- [x] Create Personal ReadMe + Add to Group ReadM eorganization
+- [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
       
 ---
 ## TO BE COMPLETED THROUGHOUT SUBMISSIONS: 
