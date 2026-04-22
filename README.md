@@ -1,12 +1,5 @@
-# README: Chain-of-Exemplar    
----
-## Model Description: A short overview of the problem and your solution.
-Option 2 - Improving upon Chain of Exemplar ([Luo et. al. 2024](https://aclanthology.org/2024.acl-long.432.pdf))
+# Chain-of-Exemplar Reproduction
 
-This project aims to address the lack of generated question diversity and mitigate hallucinations in the Chain of Exemplar model through in-context unsupervised learning, self-consistency, and potentially other methods that we come across throughout the quarter.
-
----
-## Installation Instructions: List dependencies and how to install them.
 ⚠️ Note: The original repository is not directly reproducible. See below for all fixes applied.
 
 ## :rocket: Overview
@@ -63,6 +56,8 @@ TensorFlow caused further conflicts with <kbd>typing-extensions</kbd>
 - removed TensorFlow (not required)
 
 ## 🤖 Model Issue
+We attempted to run the baseline inference using the original CoE repository. However, the required base model (Qwen-VL-Chat-Int4) was unavailable. To proceed, we replaced it with a publicly available model (Qwen-1.8B-Chat) to validate the inference pipeline.
+
 The original model depends on:
 ```text
 Qwen-VL-Chat-Int4
@@ -87,39 +82,23 @@ Please generate a question from the corresponding answer.
 ```text
 What is the force of gravity that attracts two objects with mass towards each other?
 ```
-This confirms:
-- successful model loading
-- GPU-based inference
-- functional text generation pipeline
 
----
-## Usage Instructions: How to run the main script and reproduce the results.
-In progress - will fill in once we are able to get a baseline
+🎯 Key Takeaways
+- The original repository is not directly reproducible
+- Multiple dependencies are outdated or unavailable
+- Model availability is a major issue
+- Despite this, we successfully:
+  - set up environment
+  - resolved conflicts
+  - ran baseline inference
 
----
-## Expected Output: Example results or sample output.
-In progress - will fill in once we are able to get a baseline
+🚀 Next Steps
+- Just ran a text input for now, next step is to run a multimodal input
+- Implement full CoE pipeline
+- Integrate ScienceQA dataset
+- Improve:
+ - reasoning (reduce hallucination)
+ - diversity (better distractors)
+ - self-consistency
 
----
-## Member Contributions: 
 
-### JOSEPHINE - 33.3%: 
-- [x] Set up project in HPC with VSCODE
-- [x] Clone main branch to personal branch (Josephine)
-- [x] Environment setup
-- [x] Git setup (Commit + Push Git Setup)
-- [x] Create Personal ReadMe with setup documentation + Add to Group ReadMe organization
-- [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
-
-### TARA - 33.3%: 
-- [x] Set up project in HPC
-- [x] Set up conda environment + documenting setup locally
-- [x] Working on getting baseline to work on HPC
-- [x] Model description in Group ReadMe
-- [x] Wrote Automatic Multiple Choice Question Generation (2.1) and Self-Consistency (2.4) subsections in Related Works section in paper 
-
-### KAJAL - 33.3%: 
-- [x] First commit + Push of main papers github to this repo
-- [x] Not using HPC, setup done locally
-- [x] Completed the Abstract, Introduction, Chain-of-Thought Reasoning (2.3), and Multimodal Learning for Educational
-NLP (2.5) subsections in the Related Work section in the overleaf document.
