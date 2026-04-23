@@ -11,10 +11,10 @@
 ---
 ## TO BE COMPLETED THROUGHOUT SUBMISSIONS: 
 ### Model Description: Not yet applicable
-### Installation Instructions: Not yet applicable
+### Installation Instructions: Below
 ### Usage Instructions: Below
-### Expected Output: Not yet applicable
-### Member Contributions: Not yet applicable
+### Expected Output: Below (baseline)
+### Member Contributions: Can be found in main branch
 
 ---
 
