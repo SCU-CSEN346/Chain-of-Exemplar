@@ -137,3 +137,4 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Set up Hugging Face authentication and confirmed model downloading/inference workflow
 - [x] Added reproducibility/setup documentation and .gitignore
 - [x] Began setup of authors’ CoE ScienceQA dataset and confirmed local dataset structure (train/, val/, test/, captions.json)
+- [x] Wrote Papers Methodology section in overleaf 
