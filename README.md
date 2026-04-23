@@ -114,8 +114,46 @@ numpy 1.26.4
 ```
 
 ---
+## 2. Git Setup for HPC
 
-## 2. Quickstart Inference with Hugging Face Transformers
+### 2.1. Step 1 - Create `.gitignore`
+
+Create or edit `.gitignore` (e.g. `nano .gitignore`) and add:
+
+```gitignore
+# Virtual environments
+venv/
+reproduction/Chain-of-Exemplar/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs and env files
+*.log
+.env
+
+# Data / outputs
+outputs/
+data/
+.cache/
+
+# Model files
+*.pt
+*.bin
+```
+
+In **nano**: save with `Ctrl + O` → Enter → exit with `Ctrl + X`.
+
+### 2.2. Step 2 - Commit `.gitignore`
+
+```bash
+git add .gitignore
+git commit -m "add gitignore to ignore venv"
+git push
+```
+
+## 3. Quickstart Inference with Hugging Face Transformers
 This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart.
 ## Overview
 
@@ -156,7 +194,7 @@ Replace these with your own paths if needed.
 
 ---
 
-### 2.1 Download the adapter model
+### 3.1 Download the adapter model
 
 Do not use plain git clone from Hugging Face unless Git LFS is available and working.
 
@@ -186,7 +224,7 @@ snapshot_download(
 PY
 ```
 
-### 2.2 Verify the adapter weights
+### 3.2 Verify the adapter weights
 
 ```bash
 ls -lh /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_model.bin
@@ -195,7 +233,7 @@ head -5 /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2
 
 A correct file is large, around 215 MB, and prints binary-looking output.
 
-### 2.3 Fix the adapter config
+### 3.3 Fix the adapter config
 
 Edit:
 
@@ -211,7 +249,7 @@ Set:
 
 This is the final working base model.
 
-### 2.4 Add a test image
+### 3.4 Add a test image
 
 Use a .jpg, .jpeg, or .png image.
 
@@ -228,7 +266,7 @@ cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reprod
 ls -lh test.jpg
 ```
 
-### 2.5 Create or use run_inference.py
+### 3.5 Create or use run_inference.py
 
 At this step, you can either:
 
@@ -279,9 +317,9 @@ This prompt asks the model to generate a question from the image.
 
 ---
 
-## 3. Slurm GPU Job
+## 4. Slurm GPU Job
 
-### 3.1 Create or use run_coe.slurm
+### 4.1 Create or use run_coe.slurm
 
 At this step, you can either:
 
@@ -339,7 +377,7 @@ nvidia-smi
 
 Important: `#SBATCH --gres=gpu:volta:1` is required so Slurm allocates a real GPU.
 
-### 3.2 Run the job
+### 4.2 Run the job
 
 Submit:
 
@@ -362,7 +400,7 @@ cat coe_infer_<JOBID>.err
 
 ---
 
-## 4. Example Successful Run
+## 5. Example Successful Run
 
 A successful run looked like this:
 
@@ -378,7 +416,7 @@ That output is expected because the quickstart prompt asks the model to generate
 
 ---
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 ### Wrong Python packages are being used
 
@@ -443,43 +481,3 @@ The Int4 model did not load correctly in this environment. Use:
 
 Latest bitsandbytes upgraded torch to a CUDA 13 build and broke compatibility with the Tesla V100 setup.
 
-
-
-## Git Setup for HPC
-
-### Step 1. Create `.gitignore`
-
-Create or edit `.gitignore` (e.g. `nano .gitignore`) and add:
-
-```gitignore
-# Virtual environments
-venv/
-reproduction/Chain-of-Exemplar/venv/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Logs and env files
-*.log
-.env
-
-# Data / outputs
-outputs/
-data/
-.cache/
-
-# Model files
-*.pt
-*.bin
-```
-
-In **nano**: save with `Ctrl + O` → Enter → exit with `Ctrl + X`.
-
-### Step 2. Commit `.gitignore`
-
-```bash
-git add .gitignore
-git commit -m "add gitignore to ignore venv"
-git push
-```
