@@ -18,60 +18,432 @@
 
 ---
 
-## HPC Environment Setup
+## 1. HPC Environment Setup
 
-### Step 1. Connect to HPC and request GPU
-
-```bash
-ssh your_username@login01
-srun -p gpu --gres=gpu:1 --time=02:00:00 --pty bash
-```
-
-Verify GPU:
+### 1.1 Connect to WAVE
 
 ```bash
-nvidia-smi
+ssh your_username@login.wave.scu.edu
 ```
 
-### Step 2. Load Anaconda
+### 1.2 Load Anaconda
 
 ```bash
 module purge
 module load Anaconda3
 ```
 
-### Step 3. Create environment in project storage (IMPORTANT TO NOT EXCEED STORAGE QUOTA)
+### 1.3 Create the conda environment in project storage
 
 ```bash
 conda create --prefix /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu python=3.10 -y
+```
+
+You can activate it:
+
+```bash
 conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
 ```
 
-### Step 4. Install PyTorch (GPU version)
-
-Use **pip** (avoids HPC library conflicts):
+But the safest option is to use the environment Python directly:
 
 ```bash
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python --version
 ```
 
-Verify:
+Expected:
 
-```bash
-python -c "import torch; print(torch.cuda.is_available())"
+```text
+Python 3.10.20
 ```
 
-**Expected output:** `True`
+### 1.4 Create cache and temp folders
 
-### Step 5. Install required libraries
-
-Only install these and not entire requirements: 
+These avoid home-directory quota issues.
 
 ```bash
-pip install transformers datasets tqdm peft
+mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
+mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
+mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
+mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/mpl_cache
+mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache
+```
+
+### 1.5 Install PyTorch
+
+Install the CUDA 11.8 build:
+
+```bash
+TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
+PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache \
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -m pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+```
+
+### 1.6 Install required Python packages
+
+```bash
+TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
+PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache \
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -m pip install \
+transformers==4.32.0 \
+peft==0.4.0 \
+accelerate==0.21.0 \
+datasets \
+tqdm \
+sentencepiece \
+einops \
+matplotlib \
+tiktoken \
+transformers_stream_generator \
+"numpy<2"
+```
+
+### 1.7 Verify versions
+
+```bash
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -c "import torch, transformers, peft, numpy; print('torch', torch.__version__); print('transformers', transformers.__version__); print('peft', peft.__version__); print('numpy', numpy.__version__)"
+```
+
+Expected:
+
+```text
+torch 2.0.1+cu118
+transformers 4.32.0
+peft 0.4.0
+numpy 1.26.4
 ```
 
 ---
+
+## 2. Quickstart Inference with Hugging Face Transformers
+This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart.
+## Overview
+
+This setup runs inference with the adapter model:
+- `Lhh123/coe_multitask_blip2xl_angle_2ep`
+
+Final working base model:
+- `Qwen/Qwen-VL-Chat`
+
+Important notes:
+- Use `Qwen/Qwen-VL-Chat`
+- Do **not** use `Qwen/Qwen-VL-Chat-Int4` for this setup
+- The quickstart does **not** require datasets
+- Datasets are only needed for training or reproducing experiments
+
+## Files
+
+The following files are used for inference:
+
+- `run_inference.py`
+- `run_coe.slurm`
+
+You can either:
+
+- use the versions already pushed to GitHub, or
+- create them yourself using the contents in this README
+
+## Example Paths
+
+Example paths used in this setup:
+
+- Project folder: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine`
+- Conda environment: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu`
+- Repo folder: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar`
+- Adapter model folder: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep`
+
+Replace these with your own paths if needed.
+
+---
+
+### 2.1 Download the adapter model
+
+Do not use plain git clone from Hugging Face unless Git LFS is available and working.
+
+Use snapshot_download instead:
+
+```bash
+HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache \
+HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub \
+XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache \
+TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python - <<'PY'
+from huggingface_hub import snapshot_download
+
+snapshot_download(
+    repo_id="Lhh123/coe_multitask_blip2xl_angle_2ep",
+    local_dir="/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep",
+    allow_patterns=[
+        "adapter_config.json",
+        "adapter_model.bin",
+        "README.md",
+        "qwen.tiktoken",
+        "special_tokens_map.json",
+        "tokenization_qwen.py",
+        "tokenizer_config.json",
+    ],
+)
+PY
+```
+
+### 2.2 Verify the adapter weights
+
+```bash
+ls -lh /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_model.bin
+head -5 /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_model.bin
+```
+
+A correct file is large, around 215 MB, and prints binary-looking output.
+
+### 2.3 Fix the adapter config
+
+Edit:
+
+```bash
+nano /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_config.json
+```
+
+Set:
+
+```json
+"base_model_name_or_path": "Qwen/Qwen-VL-Chat"
+```
+
+This is the final working base model.
+
+### 2.4 Add a test image
+
+Use a .jpg, .jpeg, or .png image.
+
+Example upload from your laptop:
+
+```bash
+scp ~/Downloads/test.jpg jloiretbernal@login.wave.scu.edu:/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg
+```
+
+Verify on WAVE:
+
+```bash
+cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
+ls -lh test.jpg
+```
+
+### 2.5 Create or use run_inference.py
+
+At this step, you can either:
+
+- use the run_inference.py file already pushed to GitHub, or
+- create the file yourself
+
+If you want to create it yourself:
+
+```bash
+cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
+nano run_inference.py
+```
+
+Use:
+
+```python
+import torch
+from peft import AutoPeftModelForCausalLM
+from transformers import AutoTokenizer
+
+IMAGE_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg"
+MODEL_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep"
+
+tokenizer = AutoTokenizer.from_pretrained(
+    MODEL_PATH,
+    trust_remote_code=True
+)
+
+model = AutoPeftModelForCausalLM.from_pretrained(
+    MODEL_PATH,
+    device_map="auto",
+    torch_dtype=torch.float16,
+    trust_remote_code=True
+).eval()
+
+query = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
+
+response, history = model.chat(
+    tokenizer,
+    query=query,
+    history=None
+)
+
+print(response)
+```
+
+This prompt asks the model to generate a question from the image.
+
+---
+
+## 3. Slurm GPU Job
+
+### 3.1 Create or use run_coe.slurm
+
+At this step, you can either:
+
+- use the run_coe.slurm file already pushed to GitHub, or
+- create the file yourself
+
+If you want to create it yourself:
+
+```bash
+cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
+nano run_coe.slurm
+```
+
+Use:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=coe_infer
+#SBATCH --output=coe_infer_%j.out
+#SBATCH --error=coe_infer_%j.err
+#SBATCH --time=01:00:00
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:volta:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+
+module load Anaconda3
+
+export HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
+export TRANSFORMERS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
+export HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub
+export MPLCONFIGDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/mpl_cache
+export XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache
+export PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
+export TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
+
+mkdir -p $HF_HOME
+mkdir -p $HUGGINGFACE_HUB_CACHE
+mkdir -p $MPLCONFIGDIR
+mkdir -p $XDG_CACHE_HOME
+mkdir -p $PIP_CACHE_DIR
+mkdir -p $TMPDIR
+
+cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
+
+echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
+nvidia-smi
+
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python --version
+
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -c "import torch, transformers, peft; print('torch', torch.__version__); print('cuda?', torch.cuda.is_available()); print('transformers', transformers.__version__); print('peft', peft.__version__)"
+
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python run_inference.py
+```
+
+Important: `#SBATCH --gres=gpu:volta:1` is required so Slurm allocates a real GPU.
+
+### 3.2 Run the job
+
+Submit:
+
+```bash
+sbatch run_coe.slurm
+```
+
+Check status:
+
+```bash
+squeue -u $USER
+```
+
+After it finishes:
+
+```bash
+cat coe_infer_<JOBID>.out
+cat coe_infer_<JOBID>.err
+```
+
+---
+
+## 4. Example Successful Run
+
+A successful run looked like this:
+
+```text
+torch 2.0.1+cu118
+cuda? True
+transformers 4.32.0
+peft 0.4.0
+What is the difference between the encoder and the decoder in a transformer?
+```
+
+That output is expected because the quickstart prompt asks the model to generate a question from the image. In this case, I uploaded a graph of what a encoder-decoder looks like.
+
+---
+
+## 5. Troubleshooting
+
+### Wrong Python packages are being used
+
+If you see errors like:
+
+```text
+ModuleNotFoundError: peft
+ModuleNotFoundError: torch
+```
+
+make sure you are using:
+
+```text
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python
+```
+
+### cuda? False
+
+Slurm did not allocate a GPU. Make sure the Slurm file includes:
+
+```bash
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:volta:1
+```
+
+### Quota errors
+
+If pip or Hugging Face tries to write into your home directory, make sure these are set:
+
+```bash
+export HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
+export TRANSFORMERS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
+export HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub
+export XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache
+export PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
+export TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
+```
+
+### NumPy errors
+
+If you see NumPy compatibility errors, use:
+
+```bash
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -m pip install "numpy<2"
+```
+
+numpy 1.26.4 worked.
+
+### _pickle.UnpicklingError: invalid load key, 'v'
+
+This means adapter_model.bin is a Git LFS pointer file, not the real model. Use snapshot_download instead of plain git clone.
+
+### Garbage output with Qwen/Qwen-VL-Chat-Int4
+
+The Int4 model did not load correctly in this environment. Use:
+
+```json
+"base_model_name_or_path": "Qwen/Qwen-VL-Chat"
+```
+
+### Do not install latest bitsandbytes
+
+Latest bitsandbytes upgraded torch to a CUDA 13 build and broke compatibility with the Tesla V100 setup.
+
+
 
 ## Git Setup for HPC
 
