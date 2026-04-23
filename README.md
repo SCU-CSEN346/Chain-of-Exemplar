@@ -3,9 +3,10 @@
 - [x] Set up project in HPC with VSCODE
 - [x] Clone main branch to personal branch (Josephine)
 - [x] Environment setup
-- [x] Git setup (Commit + Push Git Setup)
+- [x] Git setup including .gitignore (Commit + Push Git Setup)
 - [x] Create Personal ReadMe with setup documentation + Add to Group ReadMe organization
 - [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
+- [x] Got first baseline by doing their quickstart with HF transformers
       
 ---
 ## TO BE COMPLETED THROUGHOUT SUBMISSIONS: 
