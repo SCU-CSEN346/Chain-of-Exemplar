@@ -6,7 +6,8 @@
 - [x] Git setup including .gitignore (Commit + Push Git Setup)
 - [x] Create Personal ReadMe with setup documentation + Add to Group ReadMe organization
 - [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
-- [x] Got first baseline by doing their quickstart with HF transformers
+- [x] Got first baseline output by doing their quickstart with HF transformers and created instructions
+- [x] Wrote Papers Methodology section in overleaf
       
 ---
 ## TO BE COMPLETED THROUGHOUT SUBMISSIONS: 
