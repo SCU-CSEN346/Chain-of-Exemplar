@@ -8,14 +8,6 @@
 - [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
 - [x] Got first baseline output by doing their quickstart with HF transformers and created instructions
 - [x] Wrote Papers Methodology section in overleaf
-      
----
-## TO BE COMPLETED THROUGHOUT SUBMISSIONS: 
-### Model Description: Not yet applicable
-### Installation Instructions: Below
-### Usage Instructions: Below
-### Expected Output: Below (baseline)
-### Member Contributions: Can be found in main branch
 
 ---
 
