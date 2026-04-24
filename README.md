@@ -26,7 +26,10 @@ This project aims to address the lack of generated question diversity and mitiga
 - [x] Set up conda environment + documenting setup locally
 - [x] Working on getting baseline to work on HPC
 - [x] Model description in Group ReadMe
-- [x] Wrote Automatic Multiple Choice Question Generation (2.1) and Self-Consistency (2.4) subsections in Related Works section in paper 
+- [x] Wrote Automatic Multiple Choice Question Generation (2.1) and Self-Consistency (2.4) subsections in Related Works section in paper
+- [x] Wrote Datasets section (3) in paper
+- [x] Tried a different way to run the paper's quickstart inference in the HPC due to package conflicts/updates
+- [x] Following Josephine's setup to get inference to work on HPC
 
 ### KAJAL - 33.3%: 
 - [x] First commit + Push of main papers github to this repo
