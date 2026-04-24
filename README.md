@@ -4,10 +4,10 @@
 - [x] Clone main branch to personal branch (Josephine)
 - [x] Environment setup
 - [x] Git setup including .gitignore (Commit + Push Git Setup)
-- [x] Create Personal ReadMe with setup documentation + Add to Group ReadMe organization
-- [x] Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
-- [x] Got first baseline output by doing their quickstart with HF transformers and created instructions
-- [x] Wrote Papers Methodology section in overleaf
+- [x] Paper: Added GitHub + HF links to paper abstract and wrote In-Context Learning (2.2)
+- [x] Got first baseline output by doing the OG repo's quickstart with HF transformers
+- [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
+- [x] Paper: Wrote Papers Methodology section in overleaf
 
 ---
 
