@@ -16,7 +16,7 @@ from transformers import AutoTokenizer
 
 MODEL_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Tara/coe_multitask_blip2xl_angle_2ep"
 
-base_model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-VL-Chat-Int4", trust_remote_code=True)
+base_model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-VL-Chat", trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, trust_remote_code=True)
 model = PeftModel.from_pretrained(base_model, MODEL_PATH).from_pretrained( # path to the output directory
     device_map="cuda",
