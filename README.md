@@ -46,21 +46,9 @@ You can activate it:
 conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
 ```
 
-But the safest option is to use the environment Python directly:
-
-```bash
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python --version
-```
-
-Expected:
-
-```text
-Python 3.10.20
-```
-
 ### 1.4 Create cache and temp folders
 
-These avoid home-directory quota issues.
+These avoid home-directory quota issues on the HPC.
 
 ```bash
 mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
@@ -100,10 +88,6 @@ transformers_stream_generator \
 ```
 
 ### 1.7 Verify versions
-
-```bash
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -c "import torch, transformers, peft, numpy; print('torch', torch.__version__); print('transformers', transformers.__version__); print('peft', peft.__version__); print('numpy', numpy.__version__)"
-```
 
 Expected:
 
@@ -153,47 +137,16 @@ git add .gitignore
 git commit -m "add gitignore to ignore venv"
 git push
 ```
-
+---
 ## 3. Quickstart Inference with Hugging Face Transformers
-This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart.
-## Overview
+This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart. This does not yet include the full CoE pipeline.
 
-This setup runs inference with the adapter model:
-- `Lhh123/coe_multitask_blip2xl_angle_2ep`
-
-Final working base model:
-- `Qwen/Qwen-VL-Chat`
-
-Important notes:
+### Important notes:
 - Use `Qwen/Qwen-VL-Chat`
 - Do **not** use `Qwen/Qwen-VL-Chat-Int4` for this setup
-- The quickstart does **not** require datasets
-- Datasets are only needed for training or reproducing experiments
+- This setup runs inference with the adapter model: `Lhh123/coe_multitask_blip2xl_angle_2ep`
+- The quickstart does **not** require datasets but will once the full CoE pipeline is run
 
-## Files
-
-The following files are used for inference:
-
-- `run_inference.py`
-- `run_coe.slurm`
-
-You can either:
-
-- use the versions already pushed to GitHub, or
-- create them yourself using the contents in this README
-
-## Example Paths
-
-Example paths used in this setup:
-
-- Project folder: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine`
-- Conda environment: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu`
-- Repo folder: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar`
-- Adapter model folder: `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep`
-
-Replace these with your own paths if needed.
-
----
 
 ### 3.1 Download the adapter model
 
@@ -225,64 +178,42 @@ snapshot_download(
 PY
 ```
 
-### 3.2 Verify the adapter weights
-
-```bash
-ls -lh /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_model.bin
-head -5 /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_model.bin
-```
-
-A correct file is large, around 215 MB, and prints binary-looking output.
-
-### 3.3 Fix the adapter config
+### 3.2 Fix the adapter config
 
 Edit:
-
 ```bash
 nano /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_config.json
 ```
 
 Set:
-
 ```json
 "base_model_name_or_path": "Qwen/Qwen-VL-Chat"
 ```
 
 This is the final working base model.
 
-### 3.4 Add a test image
+### 3.3 Add a test image
 
-Use a .jpg, .jpeg, or .png image.
-
-Example upload from your laptop:
+Use a .jpg, .jpeg, or .png image and add it to your project folder with name test.jpg. In our case that was:
 
 ```bash
-scp ~/Downloads/test.jpg jloiretbernal@login.wave.scu.edu:/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg
 ```
 
-Verify on WAVE:
-
-```bash
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-ls -lh test.jpg
-```
-
-### 3.5 Create or use run_inference.py
+### 3.4 Create or use run_inference.py
 
 At this step, you can either:
 
-- use the run_inference.py file already pushed to GitHub, or
-- create the file yourself
+- use the run_inference.py file already pushed to GitHub (Josephine's branch), or
+- create the file yourself as described below
 
 If you want to create it yourself:
-
 ```bash
 cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
 nano run_inference.py
 ```
 
 Use:
-
 ```python
 import torch
 from peft import AutoPeftModelForCausalLM
@@ -324,18 +255,16 @@ This prompt asks the model to generate a question from the image.
 
 At this step, you can either:
 
-- use the run_coe.slurm file already pushed to GitHub, or
-- create the file yourself
+- use the run_coe.slurm file already pushed to GitHub (Josephine's branch), or
+- create the file yourself as described below
 
 If you want to create it yourself:
-
 ```bash
 cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
 nano run_coe.slurm
 ```
 
 Use:
-
 ```bash
 #!/bin/bash
 #SBATCH --job-name=coe_infer
@@ -381,19 +310,16 @@ Important: `#SBATCH --gres=gpu:volta:1` is required so Slurm allocates a real GP
 ### 4.2 Run the job
 
 Submit:
-
 ```bash
 sbatch run_coe.slurm
 ```
 
 Check status:
-
 ```bash
 squeue -u $USER
 ```
 
 After it finishes:
-
 ```bash
 cat coe_infer_<JOBID>.out
 cat coe_infer_<JOBID>.err
@@ -414,8 +340,6 @@ What is the difference between the encoder and the decoder in a transformer?
 ```
 
 That output is expected because the quickstart prompt asks the model to generate a question from the image. In this case, I uploaded a graph of what a encoder-decoder looks like.
-
----
 
 ## 6. Troubleshooting
 
