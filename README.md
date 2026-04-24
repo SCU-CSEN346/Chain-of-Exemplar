@@ -11,7 +11,7 @@
 
 ---
 
-## 1. HPC Environment Setup
+# 1. HPC Environment Setup
 
 ### 1.1 Connect to WAVE
 
@@ -91,7 +91,7 @@ numpy 1.26.4
 ```
 
 ---
-## 2. Git Setup for HPC
+# 2. Git Setup for HPC
 
 ### 2.1. Step 1 - Create `.gitignore`
 
@@ -130,7 +130,7 @@ git commit -m "add gitignore to ignore venv"
 git push
 ```
 ---
-## 3. Quickstart Inference with Hugging Face Transformers
+# 3. Quickstart Inference with Hugging Face Transformers
 This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart. This does not yet include the full CoE pipeline.
 
 ### Important notes:
@@ -241,7 +241,7 @@ This prompt asks the model to generate a question from the image.
 
 ---
 
-## 4. Slurm GPU Job
+# 4. Slurm GPU Job
 
 ### 4.1 Create or use run_coe.slurm
 
@@ -319,7 +319,7 @@ cat coe_infer_<JOBID>.err
 
 ---
 
-## 5. Example Successful Run
+# 5. Example Successful Run
 
 A successful run looked like this:
 
@@ -333,7 +333,7 @@ What is the difference between the encoder and the decoder in a transformer?
 
 That output is expected because the quickstart prompt asks the model to generate a question from the image. In this case, I uploaded a graph of what a encoder-decoder looks like.
 
-## 6. Troubleshooting
+# 6. Troubleshooting
 
 ### Wrong Python packages are being used
 
