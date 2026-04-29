@@ -17,7 +17,7 @@ model = AutoPeftModelForCausalLM.from_pretrained(
     trust_remote_code=True
 ).eval()
 
-query = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
+query = f"Picture: <img>{IMAGE_PATH}</img>\n Answer: Softmax\n Generate a multiple-choice question based on the picture with appropriate distractors."
 
 response, history = model.chat(
     tokenizer,
