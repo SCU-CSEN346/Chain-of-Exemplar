@@ -25,6 +25,8 @@ We are each working on a designated individual branch and will merge final aggre
 - [x] Got first baseline output by doing the OG repo's quickstart with HF transformers
 - [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
 - [x] Paper: Wrote Papers Methodology section in overleaf
+- [x] Downloaded and converted data to CoE format
+- [x] Created a Slurm script (run_lora_train.slurm) to run training properly on GPU and started LoRA finetuning on the dataset
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
