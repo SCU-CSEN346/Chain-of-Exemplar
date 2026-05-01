@@ -41,7 +41,42 @@ python -m pip install \
 
 ***Note: Don't install the original project's requirements.txt. It contains far more packages that will max out space in your home directory upon installation to the conda environment. Above is the minimum for running inference.***
 
-### 3. Create `run_inference.py`
+### 3. Download pretrained COE model
+#### Use snapshot download to download Luo et. al.'s pretrained COE model from HuggingFace: [https://huggingface.co/Lhh123/coe_multitask_blip2xl_angle_2ep]
+```bash
+cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Tara
+
+python - <<'PY'
+from huggingface_hub import snapshot_download
+
+snapshot_download(
+    repo_id="Lhh123/coe_multitask_blip2xl_angle_2ep",
+    local_dir="/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Tara/coe_multitask_blip2xl_angle_2ep",
+    allow_patterns=[
+        "adapter_config.json",
+        "adapter_model.bin",
+        "README.md",
+        "qwen.tiktoken",
+        "special_tokens_map.json",
+        "tokenization_qwen.py",
+        "tokenizer_config.json",
+    ],
+)
+PY
+```
+#### Change base model adapter from Qwen-VL-Chat-Int4 to Qwen/Qwen
+In .../coe_multitask_blip2xl_angle_2ep/adapter_config.json, set:
+```JSON
+"base_model_name_or_path": "Qwen/Qwen-VL-Chat"
+```
+
+### 4. Add a test image to working directory
+Use a .jpg, .jpeg, or .png image and add it to your project folder with name test.jpg. In our case that was:
+```bash
+mkdir images/testset/transformer_architecture_img.png
+```
+
+### 5. Create `run_inference.py`
 
 ```python
 import torch
@@ -74,7 +109,7 @@ response, history = model.chat(
 print(response)
 ```
 
-### 4. Create SLURM script
+### 6. Create SLURM script
 
 ```bash
 #!/bin/bash
@@ -100,7 +135,7 @@ cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Tara/Chain-of-Exemplar/reproductio
 /WAVE/users2/unix/tkhambadkone/.conda/envs/coe/bin/python run_inference.py
 ```
 
-### 5. Run SLURM script
+### 7. Run SLURM script
 
 ```bash
 sbatch run_coe.slurm
