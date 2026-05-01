@@ -15,6 +15,7 @@
 
 ### 1. Create a new conda environment
 ```bash
+module purge
 module load Anaconda3
 conda create -n coe python=3.10 -y
 conda activate coe
