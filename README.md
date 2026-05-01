@@ -8,6 +8,8 @@
 - [x] Got first baseline output by doing the OG repo's quickstart with HF transformers
 - [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
 - [x] Paper: Wrote Papers Methodology section in overleaf
+- [x] Downloaded and converted data to CoE format
+- [x] Created a Slurm script (run_lora_train.slurm) to run training properly on GPU and started LoRA finetuning on the dataset
 
 ---
 
@@ -76,8 +78,11 @@ einops \
 matplotlib \
 tiktoken \
 transformers_stream_generator \
+deepspeed==0.9.5 \
 "numpy<2"
 ```
+
+DeepSpeed is required because `finetune.py` imports it, even when running LoRA training.
 
 ### 1.7 Verify versions
 
@@ -297,6 +302,8 @@ nvidia-smi
 /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python run_inference.py
 ```
 
+The Slurm script already handles environment setup, including clearing conflicting Python paths and setting cache directories. Do not run training on the login node.
+
 Important: `#SBATCH --gres=gpu:volta:1` is required so Slurm allocates a real GPU.
 
 ### 4.2 Run the job
@@ -398,3 +405,178 @@ The Int4 model did not load correctly in this environment. Use:
 
 Latest bitsandbytes upgraded torch to a CUDA 13 build and broke compatibility with the Tesla V100 setup.
 
+---
+
+# 7. Dataset Preparation, LoRA Finetuning, and End-to-End Pipeline
+
+This section explains the full pipeline on WAVE HPC from dataset preparation to training to inference.
+
+## 7.1 Navigate to the correct repo folder
+
+All commands should be run from:
+
+```bash
+cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
+```
+
+IMPORTANT: All commands must be run from the `reproduction/Chain-of-Exemplar` folder. This is the only folder that contains `finetune.py`. Running from the wrong directory will result in file-not-found errors.
+
+## 7.2 Activate the environment
+
+```bash
+conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
+```
+
+## 7.3 Dataset Preparation
+
+We downloaded the ScienceQA dataset using the Hugging Face `datasets` library and saved it locally to project storage on the HPC.
+
+The dataset was then converted into the Chain-of-Exemplar conversation format. Each sample is stored as a dictionary with:
+
+- an "id"
+- a list of "conversations"
+
+Each conversation follows:
+
+```json
+{
+  "from": "user",
+  "value": "Picture: <img>path/to/image.png</img>\nAnswer: ...\nPlease generate a question..."
+},
+{
+  "from": "assistant",
+  "value": "..."
+}
+```
+
+Images from ScienceQA are stored locally under:
+
+```text
+data/images/train/
+data/images/validation/
+data/images/test/
+```
+
+and referenced in the JSON using `<img>path</img>` tokens.
+
+The conversion script used is (on Josephine's branch):
+
+```text
+convert_all_splits_to_coe.py
+```
+
+This script produces:
+
+```text
+data/coe_train.json
+data/coe_validation.json
+data/coe_test.json
+```
+
+The dataset is generated using:
+
+```bash
+python convert_all_splits_to_coe.py
+```
+
+This script automatically downloads ScienceQA using the Hugging Face datasets library and converts it into the Chain-of-Exemplar format. No manual dataset download is required.
+
+Note: These dataset files and images are not pushed to GitHub because they are large and are ignored via `.gitignore`.
+
+## 7.4 Run LoRA Finetuning (Slurm)
+
+We finetune the Qwen-VL-Chat model using LoRA on the prepared dataset.
+
+Training is launched using the Slurm script (on Josephine's branch):
+
+```text
+run_lora_train.slurm
+```
+
+This Slurm script is already configured for the WAVE HPC environment, including GPU allocation, cache paths, and environment settings.
+
+This script runs:
+
+- Base model: `Qwen/Qwen-VL-Chat`
+- Dataset: `data/coe_train.json`
+- Method: LoRA finetuning
+- Precision: `fp16` (`bf16` is not supported on Tesla V100)
+- Tesla V100 GPUs do NOT support `bf16`. Using `bf16` will crash with a `ValueError`. Always use `fp16`.
+- Output directory: `output_lora_coe_train/`
+
+Submit the training job:
+
+```bash
+sbatch run_lora_train.slurm
+```
+
+Check job status:
+
+```bash
+squeue -u $USER
+```
+
+View logs:
+
+```bash
+cat coe_lora_<JOBID>.out
+cat coe_lora_<JOBID>.err
+```
+
+Training may take several hours depending on GPU availability.
+Initial model loading may take several minutes with no output - this is expected.
+
+## 7.5 Run Inference with Finetuned Model
+
+After training completes, locate the output directory:
+
+```text
+output_lora_coe_train/
+```
+
+Create a new inference script:
+
+```bash
+nano run_inference_lora.py
+```
+
+Use:
+
+```python
+import torch
+from peft import AutoPeftModelForCausalLM
+from transformers import AutoTokenizer
+
+MODEL_PATH = "output_lora_coe_train"
+IMAGE_PATH = "test.jpg"
+
+tokenizer = AutoTokenizer.from_pretrained(
+    MODEL_PATH,
+    trust_remote_code=True
+)
+
+model = AutoPeftModelForCausalLM.from_pretrained(
+    MODEL_PATH,
+    device_map="auto",
+    torch_dtype=torch.float16,
+    trust_remote_code=True
+).eval()
+
+query = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
+
+response, history = model.chat(
+    tokenizer,
+    query=query,
+    history=None
+)
+
+print(response)
+```
+
+Run it:
+
+```bash
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python run_inference_lora.py
+```
+
+After training completes, the output directory contains LoRA adapter weights that can be used for inference.
