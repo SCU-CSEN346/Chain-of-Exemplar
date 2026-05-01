@@ -64,7 +64,7 @@ snapshot_download(
 )
 PY
 ```
-#### Change base model adapter from Qwen-VL-Chat-Int4 to Qwen/Qwen
+#### Change base model adapter from Qwen-VL-Chat-Int4 to Qwen/Qwen-VL-Chat
 In .../coe_multitask_blip2xl_angle_2ep/adapter_config.json, set:
 ```JSON
 "base_model_name_or_path": "Qwen/Qwen-VL-Chat"
