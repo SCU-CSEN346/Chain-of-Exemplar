@@ -437,7 +437,36 @@ cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reprod
 conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
 ```
 
-## 7.2 Build ScienceQA dataset
+## 7.2 Install extra packages for FULL CoE pipeline
+
+The full CoE pipeline needs extra packages beyond the quickstart inference setup.
+
+Run this inside the `coe_gpu` environment:
+
+```bash
+conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
+```
+Set cache directories first to avoid HPC home-directory quota errors:
+```bash
+export HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
+export TRANSFORMERS_CACHE=$HF_HOME
+export HF_DATASETS_CACHE=$HF_HOME
+export HUGGINGFACE_HUB_CACHE=$HF_HOME/hub
+export SENTENCE_TRANSFORMERS_HOME=$HF_HOME/sentence_transformers
+export PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
+export TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
+
+mkdir -p $HF_HOME $HUGGINGFACE_HUB_CACHE $SENTENCE_TRANSFORMERS_HOME $PIP_CACHE_DIR $TMPDIR
+```
+Install packages needed for ScienceQA, CER, and multitask preparation:
+```bash
+pip install datasets pillow jsonlines requests==2.32.3
+pip install huggingface-hub==0.25.2
+pip install sentence-transformers==2.2.2
+```
+Important: do not install the latest sentence-transformers, because it upgrades transformers and can break the Qwen-VL setup.
+
+## 7.3 Build ScienceQA dataset
 
 ```bash
 python build_scienceqa_problems.py
@@ -450,7 +479,7 @@ data/scienceqa/problems.json
 data/scienceqa/problems_blip2xl_angle.json
 ```
 
-## 7.3 Run CER (Contextualized Exemplar Retrieval)
+## 7.4 Run CER (Contextualized Exemplar Retrieval)
 
 ```bash
 python retrieve.py
@@ -464,9 +493,7 @@ Adds:
 
 to each sample.
 
-
-
-## 7.4 Build multitask dataset
+## 7.5 Build multitask dataset
 ```bash
 python prepare_multitask.py
 ```
@@ -482,7 +509,7 @@ QG (Question Generation)
 RG (Rationale Generation)
 DG (Distractor Generation)
 
-## 7.5 Train model (LoRA)
+## 7.6 Train model (LoRA)
 
 Submit:
 ```bash
@@ -490,25 +517,27 @@ sbatch slurm_fullcoe_lora.sbatch
 ```
 Config:
 
-Model: Qwen/Qwen-VL-Chat
-Method: LoRA
-Precision: fp16
-Epochs: 2
-GPU: Tesla V100
+- Model: `Qwen/Qwen-VL-Chat`
+- Method: LoRA
+- Precision: `fp16`
+- Epochs: 2
+- GPU: Tesla V100
 
 Expected runtime:
 
+```text
 6–12 hours
+```
 
-
-## 7.6 Output
-```bash
+## 7.7 Output
+```text
 output/fullcoe_lora_v100/
 ```
 Contains:
-
+```text
 adapter_model.bin
 checkpoint-*
+```
 
 ---
 
