@@ -507,9 +507,9 @@ data/ScienceQA_train_multitask_fullcoe.json
 
 This dataset includes:
 
-QG (Question Generation)
-RG (Rationale Generation)
-DG (Distractor Generation)
+- QG (Question Generation)
+- RG (Rationale Generation)
+- DG (Distractor Generation)
 
 ## 7.6 Train model (LoRA)
 
