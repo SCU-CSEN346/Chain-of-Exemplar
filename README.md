@@ -8,8 +8,19 @@
 - [x] Got first baseline output by doing the OG repo's quickstart with HF transformers
 - [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
 - [x] Paper: Wrote Papers Methodology section in overleaf
-- [x] Downloaded and converted data to CoE format
-- [x] Created a Slurm script (run_lora_train.slurm) to run training properly on GPU and started LoRA finetuning on the dataset
+- [x] Built ScienceQA → CoE pipeline (CER + multitask QG/RG/DG)
+- [x] Created Slurm scripts for FULL CoE pipeline (slurm_fullcoe_lora.sbatch) to run training properly on GPU and started LoRA finetuning on the dataset
+
+---
+
+## ⚠️ IMPORTANT
+
+This README contains two workflows:
+
+- Sections 3–5: Quickstart inference (sanity check only)
+- Section 7: FULL Chain-of-Exemplar pipeline (used for reproduction)
+
+If your goal is to reproduce the paper, go directly to Section 7.
 
 ---
 
@@ -407,176 +418,97 @@ Latest bitsandbytes upgraded torch to a CUDA 13 build and broke compatibility wi
 
 ---
 
-# 7. Dataset Preparation, LoRA Finetuning, and End-to-End Pipeline
+# 7. Full Chain-of-Exemplar Pipeline (Correct Baseline)
 
-This section explains the full pipeline on WAVE HPC from dataset preparation to training to inference.
+This section describes the FULL CoE pipeline:
 
-## 7.1 Navigate to the correct repo folder
+1. ScienceQA dataset reconstruction
+2. CER (Contextualized Exemplar Retrieval)
+3. Multitask training (QG + RG + DG)
+4. LoRA finetuning
+5. (Later) inference pipeline
 
-All commands should be run from:
+---
+
+## 7.1 Navigate to repo
 
 ```bash
 cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-```
-
-IMPORTANT: All commands must be run from the `reproduction/Chain-of-Exemplar` folder. This is the only folder that contains `finetune.py`. Running from the wrong directory will result in file-not-found errors.
-
-## 7.2 Activate the environment
-
-```bash
 conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
 ```
 
-## 7.3 Dataset Preparation
-
-We downloaded the ScienceQA dataset using the Hugging Face `datasets` library and saved it locally to project storage on the HPC.
-
-The dataset was then converted into the Chain-of-Exemplar conversation format. Each sample is stored as a dictionary with:
-
-- an "id"
-- a list of "conversations"
-
-Each conversation follows:
-
-```json
-{
-  "from": "user",
-  "value": "Picture: <img>path/to/image.png</img>\nAnswer: ...\nPlease generate a question..."
-},
-{
-  "from": "assistant",
-  "value": "..."
-}
-```
-
-Images from ScienceQA are stored locally under:
-
-```text
-data/images/train/
-data/images/validation/
-data/images/test/
-```
-
-and referenced in the JSON using `<img>path</img>` tokens.
-
-The conversion script used is (on Josephine's branch):
-
-```text
-convert_all_splits_to_coe.py
-```
-
-This script produces:
-
-```text
-data/coe_train.json
-data/coe_validation.json
-data/coe_test.json
-```
-
-The dataset is generated using:
+## 7.2 Build ScienceQA dataset
 
 ```bash
-python convert_all_splits_to_coe.py
+python build_scienceqa_problems.py
 ```
 
-This script automatically downloads ScienceQA using the Hugging Face datasets library and converts it into the Chain-of-Exemplar format. No manual dataset download is required.
-
-Note: These dataset files and images are not pushed to GitHub because they are large and are ignored via `.gitignore`.
-
-## 7.4 Run LoRA Finetuning (Slurm)
-
-We finetune the Qwen-VL-Chat model using LoRA on the prepared dataset.
-
-Training is launched using the Slurm script (on Josephine's branch):
-
-```text
-run_lora_train.slurm
-```
-
-This Slurm script is already configured for the WAVE HPC environment, including GPU allocation, cache paths, and environment settings.
-
-This script runs:
-
-- Base model: `Qwen/Qwen-VL-Chat`
-- Dataset: `data/coe_train.json`
-- Method: LoRA finetuning
-- Precision: `fp16` (`bf16` is not supported on Tesla V100)
-- Tesla V100 GPUs do NOT support `bf16`. Using `bf16` will crash with a `ValueError`. Always use `fp16`.
-- Output directory: `output_lora_coe_train/`
-
-Submit the training job:
+Creates:
 
 ```bash
-sbatch run_lora_train.slurm
+data/scienceqa/problems.json
+data/scienceqa/problems_blip2xl_angle.json
 ```
 
-Check job status:
+## 7.3 Run CER (Contextualized Exemplar Retrieval)
 
 ```bash
-squeue -u $USER
+python retrieve.py
 ```
 
-View logs:
+Adds:
 
 ```bash
-cat coe_lora_<JOBID>.out
-cat coe_lora_<JOBID>.err
+"relevant_question": [...]
 ```
 
-Training may take several hours depending on GPU availability.
-Initial model loading may take several minutes with no output - this is expected.
+to each sample.
 
-## 7.5 Run Inference with Finetuned Model
 
-After training completes, locate the output directory:
 
-```text
-output_lora_coe_train/
-```
-
-Create a new inference script:
-
+## 7.4 Build multitask dataset
 ```bash
-nano run_inference_lora.py
+python prepare_multitask.py
 ```
 
-Use:
-
-```python
-import torch
-from peft import AutoPeftModelForCausalLM
-from transformers import AutoTokenizer
-
-MODEL_PATH = "output_lora_coe_train"
-IMAGE_PATH = "test.jpg"
-
-tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_PATH,
-    trust_remote_code=True
-)
-
-model = AutoPeftModelForCausalLM.from_pretrained(
-    MODEL_PATH,
-    device_map="auto",
-    torch_dtype=torch.float16,
-    trust_remote_code=True
-).eval()
-
-query = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
-
-response, history = model.chat(
-    tokenizer,
-    query=query,
-    history=None
-)
-
-print(response)
-```
-
-Run it:
-
+Creates:
 ```bash
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python run_inference_lora.py
+data/ScienceQA_train_multitask_fullcoe.json
 ```
 
-After training completes, the output directory contains LoRA adapter weights that can be used for inference.
+This dataset includes:
+
+QG (Question Generation)
+RG (Rationale Generation)
+DG (Distractor Generation)
+
+## 7.5 Train model (LoRA)
+
+Submit:
+```bash
+sbatch slurm_fullcoe_lora.sbatch
+```
+Config:
+
+Model: Qwen/Qwen-VL-Chat
+Method: LoRA
+Precision: fp16
+Epochs: 2
+GPU: Tesla V100
+
+Expected runtime:
+
+6–12 hours
+
+
+## 7.6 Output
+```bash
+output/fullcoe_lora_v100/
+```
+Contains:
+
+adapter_model.bin
+checkpoint-*
+
+---
+
