@@ -491,6 +491,7 @@ Adds:
 ```json
 "relevant_question": [...]
 ```
+```
 to each sample.
 
 ## 7.5 Build multitask dataset
@@ -502,6 +503,7 @@ Creates:
 
 ```text
 data/ScienceQA_train_multitask_fullcoe.json
+```
 ```
 
 This dataset includes:
