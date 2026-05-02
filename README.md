@@ -18,9 +18,9 @@
 This README contains two workflows:
 
 - Section 3: Quickstart inference (sanity check only)
-- Section 5-6: FULL Chain-of-Exemplar pipeline (used for reproduction)
+- Sections 5–6: FULL Chain-of-Exemplar pipeline (used for reproduction)
 
-If your goal is to reproduce the paper, go directly to Section 7.
+If your goal is to reproduce the paper, go directly to Section 5.
 
 ## Repository Structure
 
@@ -328,11 +328,11 @@ Latest bitsandbytes upgraded torch to a CUDA 13 build and broke compatibility wi
 
 This section describes the FULL CoE pipeline:
 
-1. ScienceQA dataset reconstruction
-2. CER (Contextualized Exemplar Retrieval)
-3. Multitask training (QG + RG + DG)
-4. LoRA finetuning
-5. Multitask training (inference pipeline handled separately in Section 8)
+1. ScienceQA dataset reconstruction  
+2. CER (Contextualized Exemplar Retrieval)  
+3. Multitask data construction (QG + RG + DG)  
+4. LoRA finetuning  
+5. Inference pipeline (Section 6) 
 
 ---
 
