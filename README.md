@@ -17,10 +17,22 @@
 
 This README contains two workflows:
 
-- Sections 3–5: Quickstart inference (sanity check only)
-- Section 7: FULL Chain-of-Exemplar pipeline (used for reproduction)
+- Section 3: Quickstart inference (sanity check only)
+- Section 5-6: FULL Chain-of-Exemplar pipeline (used for reproduction)
 
 If your goal is to reproduce the paper, go directly to Section 7.
+
+## Repository Structure
+
+Key scripts:
+
+- `run_inference.py` → quickstart inference
+- `run_coe.slurm` → inference job
+- `build_scienceqa_problems.py` → dataset builder
+- `retrieve.py` → CER
+- `prepare_multitask.py` → multitask dataset
+- `slurm_fullcoe_lora.sbatch` → training job
+- `run_fullcoe_inference.py` → full CoE inference
 
 ---
 
@@ -146,212 +158,106 @@ git commit -m "add gitignore to ignore venv"
 git push
 ```
 ---
-# 3. Quickstart Inference with Hugging Face Transformers
-This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart. This does not yet include the full CoE pipeline.
+# 3. Quickstart Inference with HF Transformers (Sanity Check)
 
-### Important notes:
-- Use `Qwen/Qwen-VL-Chat`
-- Do **not** use `Qwen/Qwen-VL-Chat-Int4` for this setup
-- This setup runs inference with the adapter model: `Lhh123/coe_multitask_blip2xl_angle_2ep`
-- The quickstart does **not** require datasets but will once the full CoE pipeline is run
+This section runs a minimal inference example to verify the environment and model setup.
 
+This uses scripts already included in the repository.
 
-### 3.1 Download the adapter model
+---
 
-Do not use plain git clone from Hugging Face unless Git LFS is available and working.
+## 3.1 Required files
 
-Use snapshot_download instead:
+Ensure the following files exist:
+
+```text
+run_inference.py
+run_coe.slurm
+```
+
+If not, pull the latest version:
 
 ```bash
-HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache \
-HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub \
-XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache \
-TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python - <<'PY'
+git pull
+```
+
+---
+
+## 3.2 Download adapter model
+
+```bash
+python - <<'PY'
 from huggingface_hub import snapshot_download
 
 snapshot_download(
     repo_id="Lhh123/coe_multitask_blip2xl_angle_2ep",
-    local_dir="/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep",
-    allow_patterns=[
-        "adapter_config.json",
-        "adapter_model.bin",
-        "README.md",
-        "qwen.tiktoken",
-        "special_tokens_map.json",
-        "tokenization_qwen.py",
-        "tokenizer_config.json",
-    ],
+    local_dir="coe_multitask_blip2xl_angle_2ep"
 )
 PY
 ```
 
-### 3.2 Fix the adapter config
+---
+
+## 3.3 Fix adapter config
 
 Edit:
+
 ```bash
-nano /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_config.json
+nano coe_multitask_blip2xl_angle_2ep/adapter_config.json
 ```
 
 Set:
+
 ```json
 "base_model_name_or_path": "Qwen/Qwen-VL-Chat"
 ```
 
-This is the final working base model.
+---
 
-### 3.3 Add a test image
+## 3.4 Add test image
 
-Use a .jpg, .jpeg, or .png image and add it to your project folder with name test.jpg. In our case that was:
+Place an image at:
 
-```bash
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg
+```text
+test.jpg
 ```
-
-### 3.4 Create or use run_inference.py
-
-At this step, you can either:
-
-- use the run_inference.py file already pushed to GitHub (Josephine's branch), or
-- create the file yourself as described below
-
-If you want to create it yourself:
-```bash
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-nano run_inference.py
-```
-
-Use:
-```python
-import torch
-from peft import AutoPeftModelForCausalLM
-from transformers import AutoTokenizer
-
-IMAGE_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg"
-MODEL_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep"
-
-tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_PATH,
-    trust_remote_code=True
-)
-
-model = AutoPeftModelForCausalLM.from_pretrained(
-    MODEL_PATH,
-    device_map="auto",
-    torch_dtype=torch.float16,
-    trust_remote_code=True
-).eval()
-
-query = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
-
-response, history = model.chat(
-    tokenizer,
-    query=query,
-    history=None
-)
-
-print(response)
-```
-
-This prompt asks the model to generate a question from the image.
 
 ---
 
-# 4. Slurm GPU Job
+## 3.5 Run inference (Slurm)
 
-### 4.1 Create or use run_coe.slurm
-
-At this step, you can either:
-
-- use the run_coe.slurm file already pushed to GitHub (Josephine's branch), or
-- create the file yourself as described below
-
-If you want to create it yourself:
-```bash
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-nano run_coe.slurm
-```
-
-Use:
-```bash
-#!/bin/bash
-#SBATCH --job-name=coe_infer
-#SBATCH --output=coe_infer_%j.out
-#SBATCH --error=coe_infer_%j.err
-#SBATCH --time=01:00:00
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:volta:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
-
-module load Anaconda3
-
-export HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
-export TRANSFORMERS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
-export HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub
-export MPLCONFIGDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/mpl_cache
-export XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache
-export PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
-export TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
-
-mkdir -p $HF_HOME
-mkdir -p $HUGGINGFACE_HUB_CACHE
-mkdir -p $MPLCONFIGDIR
-mkdir -p $XDG_CACHE_HOME
-mkdir -p $PIP_CACHE_DIR
-mkdir -p $TMPDIR
-
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-
-echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
-nvidia-smi
-
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python --version
-
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -c "import torch, transformers, peft; print('torch', torch.__version__); print('cuda?', torch.cuda.is_available()); print('transformers', transformers.__version__); print('peft', peft.__version__)"
-
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python run_inference.py
-```
-
-The Slurm script already handles environment setup, including clearing conflicting Python paths and setting cache directories. Do not run training on the login node.
-
-Important: `#SBATCH --gres=gpu:volta:1` is required so Slurm allocates a real GPU.
-
-### 4.2 Run the job
-
-Submit:
 ```bash
 sbatch run_coe.slurm
 ```
 
-Check status:
+Check job:
+
 ```bash
 squeue -u $USER
 ```
 
-After it finishes:
+View output:
+
 ```bash
 cat coe_infer_<JOBID>.out
-cat coe_infer_<JOBID>.err
 ```
 
 ---
 
-# 5. Example Successful Run
+## 3.6 Expected result
 
-A successful run looked like this:
+Example output:
 
 ```text
-torch 2.0.1+cu118
-cuda? True
-transformers 4.32.0
-peft 0.4.0
 What is the difference between the encoder and the decoder in a transformer?
 ```
 
-That output is expected because the quickstart prompt asks the model to generate a question from the image. In this case, I uploaded a graph of what a encoder-decoder looks like.
+This confirms:
+- GPU works
+- model loads
+- inference pipeline works
 
-# 6. Troubleshooting
+# 4. Troubleshooting
 
 ### Wrong Python packages are being used
 
@@ -418,7 +324,7 @@ Latest bitsandbytes upgraded torch to a CUDA 13 build and broke compatibility wi
 
 ---
 
-# 7. Full Chain-of-Exemplar Pipeline (Correct Baseline)
+# 5. Full Chain-of-Exemplar Pipeline (Correct Baseline)
 
 This section describes the FULL CoE pipeline:
 
@@ -430,14 +336,14 @@ This section describes the FULL CoE pipeline:
 
 ---
 
-## 7.1 Navigate to repo
+## 5.1 Navigate to repo
 
 ```bash
 cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
 conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
 ```
 
-## 7.2 Install extra packages for FULL CoE pipeline
+## 5.2 Install extra packages for FULL CoE pipeline
 
 The full CoE pipeline needs extra packages beyond the quickstart inference setup.
 
@@ -494,7 +400,7 @@ sentence-transformers: 2.2.2
 Trainer import OK
 ```
 
-## 7.3 Required scripts (IMPORTANT)
+## 5.3 Required scripts (IMPORTANT)
 
 The full CoE pipeline depends on custom scripts added in this repository.
 
@@ -521,7 +427,7 @@ If not, pull the latest version:
 git pull
 ```
 
-## 7.4 Build ScienceQA dataset
+## 5.4 Build ScienceQA dataset
 
 ```bash
 python build_scienceqa_problems.py
@@ -534,7 +440,7 @@ data/scienceqa/problems.json
 data/scienceqa/problems_blip2xl_angle.json
 ```
 
-## 7.5 Run CER (Contextualized Exemplar Retrieval)
+## 5.5 Run CER (Contextualized Exemplar Retrieval)
 
 ```bash
 python retrieve.py
@@ -552,7 +458,7 @@ Adds:
 
 to each sample.
 
-## 7.6 Build multitask dataset
+## 5.6 Build multitask dataset
 
 ```bash
 python prepare_multitask.py
@@ -575,7 +481,8 @@ This dataset includes:
 - QG (Question Generation)
 - RG (Rationale Generation)
 - DG (Distractor Generation)
-## 7.7 Train model (LoRA)
+
+## 5.7 Train model (LoRA)
 
 Submit:
 ```bash
@@ -595,7 +502,7 @@ Expected runtime:
 6–12 hours
 ```
 
-## 7.8 Output
+## 5.8 Output
 ```text
 output/fullcoe_lora_v100/
 ```
@@ -607,7 +514,7 @@ checkpoint-*
 
 ---
 
-# 8. Full CoE Inference Pipeline (QG → RG → DG) 
+# 6. Full CoE Inference Pipeline (QG → RG → DG) 
 
 After training, the Chain-of-Exemplar pipeline requires **chaining three tasks**:
 
@@ -619,7 +526,7 @@ This section describes how to run full inference using the trained model.
 
 ---
 
-## 8.1 Create inference script
+## 6.1 Create inference script
 
 Create a new file:
 
@@ -677,7 +584,7 @@ print("DG:", distractors)
 
 ---
 
-## 8.2 Run inference
+## 6.2 Run inference
 
 ```bash
 python run_fullcoe_inference.py
@@ -685,7 +592,7 @@ python run_fullcoe_inference.py
 
 ---
 
-## 8.3 Notes
+## 6.3 Notes
 
 - You must manually provide the **correct answer** for RG and DG steps.
 - The model was trained multitask, so it understands all three prompts.
@@ -693,7 +600,7 @@ python run_fullcoe_inference.py
 
 ---
 
-## 8.4 Important
+## 6.4 Important
 
 This chaining step is **required** to reproduce the behavior of the Chain-of-Exemplar paper.
 
