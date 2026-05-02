@@ -426,7 +426,7 @@ This section describes the FULL CoE pipeline:
 2. CER (Contextualized Exemplar Retrieval)
 3. Multitask training (QG + RG + DG)
 4. LoRA finetuning
-5. (Later) inference pipeline
+5. Multitask training (inference pipeline handled separately in Section 8)
 
 ---
 
@@ -466,6 +466,33 @@ pip install sentence-transformers==2.2.2
 ```
 Important: do not install the latest sentence-transformers, because it upgrades transformers and can break the Qwen-VL setup.
 
+### Verify environment (IMPORTANT)
+
+Run:
+
+```bash
+python - <<'PY'
+import torch, transformers, huggingface_hub, datasets, sentence_transformers
+from transformers import Trainer
+
+print("torch:", torch.__version__)
+print("transformers:", transformers.__version__)
+print("huggingface-hub:", huggingface_hub.__version__)
+print("datasets:", datasets.__version__)
+print("sentence-transformers:", sentence_transformers.__version__)
+print("Trainer import OK")
+PY
+```
+
+Expected:
+
+```text
+torch: 2.0.1+cu118
+transformers: 4.32.0
+huggingface-hub: 0.25.2
+sentence-transformers: 2.2.2
+Trainer import OK
+```
 
 ## 7.3 Required scripts (IMPORTANT)
 
@@ -512,7 +539,10 @@ data/scienceqa/problems_blip2xl_angle.json
 ```bash
 python retrieve.py
 ```
-Note: This uses a modified `retrieve.py` that replaces the original AnglE embedding with sentence-transformers for compatibility on HPC.
+
+Note:
+- This uses a modified `retrieve.py` that replaces the original AnglE embedding with sentence-transformers for compatibility on HPC.
+- CER may take 10–30 minutes depending on compute.
 
 Adds:
 
@@ -523,6 +553,7 @@ Adds:
 to each sample.
 
 ## 7.6 Build multitask dataset
+
 ```bash
 python prepare_multitask.py
 ```
@@ -533,12 +564,17 @@ Creates:
 data/ScienceQA_train_multitask_fullcoe.json
 ```
 
+Expected size:
+
+```text
+~38,000 samples (3× original train set)
+```
+
 This dataset includes:
 
 - QG (Question Generation)
 - RG (Rationale Generation)
 - DG (Distractor Generation)
-
 ## 7.7 Train model (LoRA)
 
 Submit:
