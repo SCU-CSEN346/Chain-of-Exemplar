@@ -474,7 +474,7 @@ python build_scienceqa_problems.py
 
 Creates:
 
-```bash
+```text
 data/scienceqa/problems.json
 data/scienceqa/problems_blip2xl_angle.json
 ```
@@ -484,22 +484,23 @@ data/scienceqa/problems_blip2xl_angle.json
 ```bash
 python retrieve.py
 ```
-
+Note: This uses a modified `retrieve.py` that replaces the original AnglE embedding with sentence-transformers for compatibility on HPC.
+```markdown
 Adds:
 
-```bash
+```json
 "relevant_question": [...]
 ```
-
 to each sample.
 
 ## 7.5 Build multitask dataset
 ```bash
 python prepare_multitask.py
 ```
-
+```markdown
 Creates:
-```bash
+
+```text
 data/ScienceQA_train_multitask_fullcoe.json
 ```
 
