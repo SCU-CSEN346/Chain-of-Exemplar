@@ -466,7 +466,35 @@ pip install sentence-transformers==2.2.2
 ```
 Important: do not install the latest sentence-transformers, because it upgrades transformers and can break the Qwen-VL setup.
 
-## 7.3 Build ScienceQA dataset
+
+## 7.3 Required scripts (IMPORTANT)
+
+The full CoE pipeline depends on custom scripts added in this repository.
+
+Make sure the following files exist in:
+
+```text
+reproduction/Chain-of-Exemplar/
+```
+
+Required scripts:
+
+```text
+build_scienceqa_problems.py
+retrieve.py
+prepare_multitask.py
+finetune/run_fullcoe_lora_v100.sh
+slurm_fullcoe_lora.sbatch
+```
+
+If you cloned this repository, these should already be present.  
+If not, pull the latest version:
+
+```bash
+git pull
+```
+
+## 7.4 Build ScienceQA dataset
 
 ```bash
 python build_scienceqa_problems.py
@@ -479,7 +507,7 @@ data/scienceqa/problems.json
 data/scienceqa/problems_blip2xl_angle.json
 ```
 
-## 7.4 Run CER (Contextualized Exemplar Retrieval)
+## 7.5 Run CER (Contextualized Exemplar Retrieval)
 
 ```bash
 python retrieve.py
@@ -494,7 +522,7 @@ Adds:
 
 to each sample.
 
-## 7.5 Build multitask dataset
+## 7.6 Build multitask dataset
 ```bash
 python prepare_multitask.py
 ```
@@ -511,7 +539,7 @@ This dataset includes:
 - RG (Rationale Generation)
 - DG (Distractor Generation)
 
-## 7.6 Train model (LoRA)
+## 7.7 Train model (LoRA)
 
 Submit:
 ```bash
@@ -531,7 +559,7 @@ Expected runtime:
 6–12 hours
 ```
 
-## 7.7 Output
+## 7.8 Output
 ```text
 output/fullcoe_lora_v100/
 ```
@@ -543,3 +571,98 @@ checkpoint-*
 
 ---
 
+# 8. Full CoE Inference Pipeline (QG → RG → DG) 
+
+After training, the Chain-of-Exemplar pipeline requires **chaining three tasks**:
+
+```text
+Question Generation (QG) → Rationale Generation (RG) → Distractor Generation (DG)
+```
+
+This section describes how to run full inference using the trained model.
+
+---
+
+## 8.1 Create inference script
+
+Create a new file:
+
+```bash
+nano run_fullcoe_inference.py
+```
+
+Paste the following:
+
+```python
+import torch
+from peft import AutoPeftModelForCausalLM
+from transformers import AutoTokenizer
+
+MODEL_PATH = "output/fullcoe_lora_v100"
+
+tokenizer = AutoTokenizer.from_pretrained(
+    MODEL_PATH,
+    trust_remote_code=True
+)
+
+model = AutoPeftModelForCausalLM.from_pretrained(
+    MODEL_PATH,
+    device_map="auto",
+    torch_dtype=torch.float16,
+    trust_remote_code=True
+).eval()
+
+def ask(prompt):
+    response, _ = model.chat(
+        tokenizer,
+        query=prompt,
+        history=None
+    )
+    return response
+
+# Example input
+IMAGE_PATH = "data/images/test.jpg"
+
+# Step 1: QG (generate question)
+qg_prompt = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
+question = ask(qg_prompt)
+print("QG:", question)
+
+# Step 2: RG (generate reasoning)
+rg_prompt = f"Picture: <img>{IMAGE_PATH}</img>\nQuestion: {question}\nAnswer: (your answer here)\nExplain the reasoning."
+reasoning = ask(rg_prompt)
+print("RG:", reasoning)
+
+# Step 3: DG (generate distractors)
+dg_prompt = f"Picture: <img>{IMAGE_PATH}</img>\nQuestion: {question}\nAnswer: (your answer here)\nGenerate distractors."
+distractors = ask(dg_prompt)
+print("DG:", distractors)
+```
+
+---
+
+## 8.2 Run inference
+
+```bash
+python run_fullcoe_inference.py
+```
+
+---
+
+## 8.3 Notes
+
+- You must manually provide the **correct answer** for RG and DG steps.
+- The model was trained multitask, so it understands all three prompts.
+- Each step depends on the previous output.
+
+---
+
+## 8.4 Important
+
+This chaining step is **required** to reproduce the behavior of the Chain-of-Exemplar paper.
+
+Training alone is not sufficient — inference must follow:
+
+```text
+QG → RG → DG
+```
