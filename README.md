@@ -485,25 +485,24 @@ data/scienceqa/problems_blip2xl_angle.json
 python retrieve.py
 ```
 Note: This uses a modified `retrieve.py` that replaces the original AnglE embedding with sentence-transformers for compatibility on HPC.
-```markdown
+
 Adds:
 
 ```json
 "relevant_question": [...]
 ```
-```
+
 to each sample.
 
 ## 7.5 Build multitask dataset
 ```bash
 python prepare_multitask.py
 ```
-```markdown
+
 Creates:
 
 ```text
 data/ScienceQA_train_multitask_fullcoe.json
-```
 ```
 
 This dataset includes:
