@@ -1,11 +1,13 @@
 #!/bin/bash
-#SBATCH --job-name=fullcoe
+#SBATCH --job-name=fullcoe-1ep
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
-#SBATCH --time=24:00:00
-#SBATCH --output=logs/fullcoe_%j.out
+#SBATCH --time=48:00:00
+#SBATCH --output=logs/fullcoe_1ep_%j.out
+#SBATCH --mail-user=jloiretbernal@scu.edu
+#SBATCH --mail-type=BEGIN,END,FAIL,TIME_LIMIT
 
 cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
 

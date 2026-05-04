@@ -12,3 +12,19 @@ build
 Qwen-VL-Chat/
 Qwen-VL-Chat-Int4/
 SimSun.ttf
+
+# Slurm logs and generated outputs
+*.out
+*.err
+logs/
+output/
+output_lora_coe_train/
+qg_eval_results.json
+test.jpg
+
+# Large/generated model/data files
+data/
+*.bin
+*.pt
+*.pth
+*.safetensors

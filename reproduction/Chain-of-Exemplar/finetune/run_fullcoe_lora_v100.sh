@@ -2,7 +2,7 @@
 
 MODEL="Qwen/Qwen-VL-Chat"
 DATA="data/ScienceQA_train_multitask_fullcoe.json"
-OUT="output/fullcoe_lora_v100"
+OUT="output/fullcoe_lora_v100_1ep"
 
 python finetune.py \
   --model_name_or_path $MODEL \
@@ -11,7 +11,7 @@ python finetune.py \
   --bf16 False \
   --fix_vit True \
   --output_dir $OUT \
-  --num_train_epochs 2 \
+  --num_train_epochs 1 \
   --per_device_train_batch_size 1 \
   --gradient_accumulation_steps 16 \
   --evaluation_strategy "no" \
@@ -22,4 +22,4 @@ python finetune.py \
   --model_max_length 1024 \
   --lazy_preprocess True \
   --gradient_checkpointing \
-  --use_lora
+  --use_lora 
