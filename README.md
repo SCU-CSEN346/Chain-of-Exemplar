@@ -493,18 +493,18 @@ Config:
 - Model: `Qwen/Qwen-VL-Chat`
 - Method: LoRA
 - Precision: `fp16`
-- Epochs: 2
+- Epochs: 1
 - GPU: Tesla V100
 
 Expected runtime:
 
 ```text
-6–12 hours
+12–14 hours
 ```
 
 ## 5.8 Output
 ```text
-output/fullcoe_lora_v100/
+output/fullcoe_lora_v100_1ep/
 ```
 Contains:
 ```text
@@ -541,7 +541,7 @@ import torch
 from peft import AutoPeftModelForCausalLM
 from transformers import AutoTokenizer
 
-MODEL_PATH = "output/fullcoe_lora_v100"
+MODEL_PATH = "output/fullcoe_lora_v100_1ep"
 
 tokenizer = AutoTokenizer.from_pretrained(
     MODEL_PATH,
