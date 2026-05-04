@@ -511,7 +511,15 @@ Contains:
 adapter_model.bin
 checkpoint-*
 ```
+### Shared trained model on WAVE
 
+The trained 1-epoch LoRA adapter is not stored in GitHub because it is too large.
+
+On WAVE, group members can access it at:
+
+```text
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_1ep
+```
 ---
 
 # 6. Full CoE Inference Pipeline (QG → RG → DG) 
