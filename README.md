@@ -10,6 +10,9 @@
 - [x] Tried a different way to run the paper's quickstart inference in the HPC due to package conflicts/updates
 - [x] Following Josephine's setup to get inference to work on HPC
 - [x] Figured out how to run inference on HPC using simpler Conda setup
+- [x] Fixed Conda setup to work for LoRA fine-tuning on HPC
+- [x] Have baseline model running on HPC
+- [x] Wrote Paper Evaluation section (5) in paper
 
 ## How to Run Inference on HPC
 
