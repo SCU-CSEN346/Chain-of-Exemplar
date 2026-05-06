@@ -8,6 +8,9 @@ We are each working on a designated individual branch and will merge final aggre
 - Tara's branch: [https://github.com/SCU-CSEN346/Chain-of-Exemplar/tree/tara]
 - Kajal's branch: [https://github.com/SCU-CSEN346/Chain-of-Exemplar/tree/kajal]
 
+## Dataset
+We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE ScienceQA dataset](https://huggingface.co/datasets/Lhh123/CoE_ScienceQA)
+
 ---
 # Member Contributions: 
 ### OVERALL PROJECT STATUS: 
