@@ -15,7 +15,8 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 # Member Contributions: 
 ### OVERALL PROJECT STATUS: 
 - [x] Ran Inference on HPC with HF Transformers successfully with image + prompt as input and a generated question
-- [ ] Download datasets and upload them to our HF repo
+- [x] Downloaded datasets and converted them to correct format for CoE
+- [x] Ran full CoE baseline with the question, rationale, and distractor generations with evaluation metrics for 1 sample from test set
 - [ ] Run full CoE baseline with the question, rationale, and distractor generations with evaluation metrics to use as a comparison for our improvements
 - [ ] Improve this baseline with our own implementations
 
@@ -28,8 +29,11 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Got first baseline output by doing the OG repo's quickstart with HF transformers
 - [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
 - [x] Paper: Wrote Papers Methodology section in overleaf
-- [x] Downloaded and converted data to CoE format
-- [x] Created a Slurm script (run_lora_train.slurm) to run training properly on GPU and started LoRA finetuning on the dataset
+- [x] Built ScienceQA → CoE pipeline (CER + multitask QG/RG/DG)
+- [x] Created Slurm scripts for FULL CoE pipeline (slurm_fullcoe_lora.sbatch) to run training properly on GPU and started LoRA finetuning on the dataset
+- [x] Started full CoE pipeline on finetuned model with full test set and waiting for job to finish
+- [x] Ran full CoE pipeline on finetuned model with 1 sample from test set and gathered evaluation metrics
+- [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
