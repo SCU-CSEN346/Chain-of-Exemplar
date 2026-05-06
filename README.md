@@ -18,6 +18,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Downloaded datasets and converted them to correct format for CoE
 - [x] Ran full CoE baseline with the question, rationale, and distractor generations with evaluation metrics for 1 sample from test set
 - [ ] Run full CoE baseline with the question, rationale, and distractor generations with evaluation metrics to use as a comparison for our improvements
+- [ ] Since our dataset will not go on HF, add instructions for finding it to the readme
 - [ ] Improve this baseline with our own implementations
 
 ### JOSEPHINE - 33.3%: 
