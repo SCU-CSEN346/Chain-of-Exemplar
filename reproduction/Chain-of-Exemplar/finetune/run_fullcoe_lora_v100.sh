@@ -4,7 +4,7 @@ MODEL="Qwen/Qwen-VL-Chat"
 DATA="data/ScienceQA_train_multitask_fullcoe.json"
 OUT="output/fullcoe_lora_v100"
 
-python finetune.py \
+/WAVE/users2/unix/tkhambadkone/.conda/envs/coe/bin/python finetune.py \
   --model_name_or_path $MODEL \
   --data_path $DATA \
   --fp16 True \

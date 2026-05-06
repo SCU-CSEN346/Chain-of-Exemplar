@@ -18,12 +18,6 @@ module load CUDA/12.2.1
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate coe
 
-# Diagnostics: print Python and deepspeed info
-which python
-python --version
-python -c "import sys; print('Python executable:', sys.executable)"
-python -c "import deepspeed; print('deepspeed location:', deepspeed.__file__)"
-
 cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Tara/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
 
 # Run the training script using the environment's Python
