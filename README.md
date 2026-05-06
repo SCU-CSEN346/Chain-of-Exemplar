@@ -10,6 +10,10 @@
 - [x] Paper: Wrote Papers Methodology section in overleaf
 - [x] Built ScienceQA → CoE pipeline (CER + multitask QG/RG/DG)
 - [x] Created Slurm scripts for FULL CoE pipeline (slurm_fullcoe_lora.sbatch) to run training properly on GPU and started LoRA finetuning on the dataset
+- [x] Started full CoE pipeline on finetuned model with full test set and waiting for job to finish
+- [x] Ran full CoE pipeline on finetuned model with 1 sample from test set and gathered evaluation metrics
+- [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
+- [ ] Update README once the full pipeline on full test set works
 
 ---
 
