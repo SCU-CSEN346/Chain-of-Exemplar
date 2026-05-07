@@ -9,11 +9,14 @@
 - [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
 - [x] Paper: Wrote Papers Methodology section in overleaf
 - [x] Built ScienceQA → CoE pipeline (CER + multitask QG/RG/DG)
-- [x] Created Slurm scripts for FULL CoE pipeline (slurm_fullcoe_lora.sbatch) to run training properly on GPU and started LoRA finetuning on the dataset
-- [x] Started full CoE pipeline on finetuned model with full test set and waiting for job to finish
+- [x] Created Slurm scripts for FULL CoE pipeline (training + inference + evaluation)
+- [x] Finetuned LoRA model on the CoE multitask dataset
 - [x] Ran full CoE pipeline on finetuned model with 1 sample from test set and gathered evaluation metrics
+- [x] Ran full CoE pipeline on full test set: QG → RG → DG
+- [x] Launched final scoring job for QG + RG + DG through Slurm
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
-- [ ] Update README once the full pipeline on full test set works
+- [ ] Update final README with final DG/full consolidated metrics once scoring job completes
+- [ ] Remove any files on github that no longer are being used
 
 ---
 
@@ -527,98 +530,341 @@ On WAVE, group members can access it at:
 ```
 ---
 
-# 6. Full CoE Inference Pipeline (QG → RG → DG) 
+# 6. Full CoE Inference Pipeline on the Full Test Set (QG → RG → DG)
 
-After training, the Chain-of-Exemplar pipeline requires **chaining three tasks**:
+After training, the Chain-of-Exemplar reproduction requires running the model in three chained stages on the ScienceQA test set:
 
-```text
-Question Generation (QG) → Rationale Generation (RG) → Distractor Generation (DG)
-```
-
-This section describes how to run full inference using the trained model.
-
----
-
-## 6.1 Create inference script
-
-Create a new file:
-
-```bash
-nano run_fullcoe_inference.py
-```
-
-Paste the following:
-
-```python
-import torch
-from peft import AutoPeftModelForCausalLM
-from transformers import AutoTokenizer
-
-MODEL_PATH = "output/fullcoe_lora_v100_1ep"
-
-tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_PATH,
-    trust_remote_code=True
-)
-
-model = AutoPeftModelForCausalLM.from_pretrained(
-    MODEL_PATH,
-    device_map="auto",
-    torch_dtype=torch.float16,
-    trust_remote_code=True
-).eval()
-
-def ask(prompt):
-    response, _ = model.chat(
-        tokenizer,
-        query=prompt,
-        history=None
-    )
-    return response
-
-# Example input
-IMAGE_PATH = "data/images/test.jpg"
-
-# Step 1: QG (generate question)
-qg_prompt = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
-question = ask(qg_prompt)
-print("QG:", question)
-
-# Step 2: RG (generate reasoning)
-rg_prompt = f"Picture: <img>{IMAGE_PATH}</img>\nQuestion: {question}\nAnswer: (your answer here)\nExplain the reasoning."
-reasoning = ask(rg_prompt)
-print("RG:", reasoning)
-
-# Step 3: DG (generate distractors)
-dg_prompt = f"Picture: <img>{IMAGE_PATH}</img>\nQuestion: {question}\nAnswer: (your answer here)\nGenerate distractors."
-distractors = ask(dg_prompt)
-print("DG:", distractors)
-```
-
----
-
-## 6.2 Run inference
-
-```bash
-python run_fullcoe_inference.py
-```
-
----
-
-## 6.3 Notes
-
-- You must manually provide the **correct answer** for RG and DG steps.
-- The model was trained multitask, so it understands all three prompts.
-- Each step depends on the previous output.
-
----
-
-## 6.4 Important
-
-This chaining step is **required** to reproduce the behavior of the Chain-of-Exemplar paper.
-
-Training alone is not sufficient — inference must follow:
-
-```text
 QG → RG → DG
+
+Important:
+- This is the actual reproduction workflow used for evaluation.
+- Long runs must be submitted through Slurm.
+- The same finetuned LoRA checkpoint is reused across QG, RG, and DG.
+- The later stages depend on files produced by earlier stages.
+
+Checkpoint used for full inference:
+
+`output/fullcoe_lora_v100_2ep`
+
+---
+
+## 6.1 Full-test-set files used
+
+### QG
+- Input:
+  `data/ScienceQA_test_qg_blip2xl_angle.json`
+- Inference script:
+  `infer_qg_test_2ep.py`
+- Slurm script:
+  `run_infer_qg_test_2ep.slurm`
+- Output predictions:
+  `infer/pred_test_qg_2ep.json`
+
+### RG
+- Prep script:
+  `prepare_rg_test_2ep.py`
+- Generated RG test file:
+  `data/ScienceQA_test_rg_from_qg_2ep.json`
+- Inference script:
+  `infer_rg_test_2ep.py`
+- Slurm script:
+  `slurm_infer_rg_2ep.sh`
+- Output predictions:
+  `infer/pred_test_rg_2ep.json`
+
+### DG
+- Prep script:
+  `prepare_dg_test_2ep.py`
+- Generated DG test file:
+  `data/ScienceQA_test_dg_from_qg_rg_2ep.json`
+- Inference script:
+  `infer_dg_test_2ep.py`
+- Slurm script:
+  `slurm_infer_dg_2ep.sh`
+- Output predictions:
+  `infer/pred_test_dg_2ep.json`
+
+### Evaluation
+- Local scorer:
+  `scoring_local.py`
+- Full scoring Slurm script:
+  `slurm_score_all_2ep.sh`
+
+---
+
+## 6.2 QG full-test inference
+
+QG is the first stage.
+
+Run:
+
+```bash
+sbatch run_infer_qg_test_2ep.slurm
 ```
+
+Monitor:
+
+```bash
+squeue -u $USER
+tail -n 40 logs/qg2ep_<JOBID>.err
+```
+
+Expected output file:
+
+`infer/pred_test_qg_2ep.json`
+
+Prediction format:
+
+```json
+[
+  {"id": "qg_test_0", "response": "..."},
+  ...
+]
+```
+
+---
+
+## 6.3 Build RG test set from QG outputs
+
+RG is not run directly from the original test set.
+Instead, the RG test set is built from the full QG predictions.
+
+Run:
+
+```bash
+python prepare_rg_test_2ep.py
+```
+
+This creates:
+
+`data/ScienceQA_test_rg_from_qg_2ep.json`
+
+---
+
+## 6.4 RG full-test inference
+
+Run:
+
+```bash
+sbatch slurm_infer_rg_2ep.sh
+```
+
+Monitor:
+
+```bash
+squeue -u $USER
+tail -n 40 logs/rg2ep_<JOBID>.err
+```
+
+Expected output file:
+
+`infer/pred_test_rg_2ep.json`
+
+RG predictions have the form:
+
+```json
+[
+  {"id": "identity_test_0", "response": "..."},
+  ...
+]
+```
+
+---
+
+## 6.5 Build DG test set from QG + RG outputs
+
+DG is the final stage.
+Its input depends on both the QG and RG outputs.
+
+Run:
+
+```bash
+python prepare_dg_test_2ep.py
+```
+
+This creates:
+
+`data/ScienceQA_test_dg_from_qg_rg_2ep.json`
+
+---
+
+## 6.6 DG full-test inference
+
+Run:
+
+```bash
+sbatch slurm_infer_dg_2ep.sh
+```
+
+Monitor:
+
+```bash
+squeue -u $USER
+tail -n 40 logs/dg2ep_<JOBID>.err
+```
+
+Expected output file:
+
+`infer/pred_test_dg_2ep.json`
+
+---
+
+## 6.7 Important bug fix: malformed image paths in RG/DG datasets
+
+While building the RG and DG test sets, some prompts contained malformed image paths like:
+
+```text
+<img>data/scienceqa/test/test_1/data/images/test/1.png</img>
+```
+
+These caused inference failures with `FileNotFoundError`.
+
+They were patched so they instead use the correct path format:
+
+```text
+<img>data/images/test/1.png</img>
+```
+
+This patch was required for both:
+- `data/ScienceQA_test_rg_from_qg_2ep.json`
+- `data/ScienceQA_test_dg_from_qg_rg_2ep.json`
+
+---
+
+## 6.8 Slurm environment activation on WAVE
+
+The correct activation pattern for these jobs is:
+
+```bash
+source /WAVE/apps/x86_64/packages/Anaconda3/2025.12-2/app/etc/profile.d/conda.sh
+conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
+```
+
+Typical Slurm directives used:
+
+```bash
+#SBATCH -J <jobname>
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH -t 24:00:00
+#SBATCH -o logs/<jobname>_%j.out
+#SBATCH -e logs/<jobname>_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=jloiretbernal@scu.edu
+```
+
+---
+
+## 6.9 Full evaluation on the test set
+
+Evaluation is run with the local scorer:
+
+`scoring_local.py`
+
+Metrics:
+- BLEU-4
+- METEOR
+- ROUGE-L
+- BLEURT
+
+Because long scoring runs are slow on the cluster, final evaluation is submitted as a Slurm job:
+
+```bash
+sbatch slurm_score_all_2ep.sh
+```
+
+This scoring job runs:
+1. QG scoring
+2. RG scoring
+3. DG scoring
+
+in a single batch script.
+
+---
+
+## 6.10 Notes about scoring on HPC
+
+BLEURT evaluation is the slowest part of scoring.
+
+Important HPC notes:
+- scoring may run on CPU even on a GPU node depending on TensorFlow/CUDA library availability
+- NLTK data must be redirected outside the home directory due to quota limits
+- Hugging Face and matplotlib caches should also be redirected to project storage
+
+Environment variables used in scoring jobs:
+
+```bash
+export NLTK_DATA=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/nltk_data
+export MPLCONFIGDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/mplconfig
+export HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache_scoreall
+export TRANSFORMERS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache_scoreall
+export HF_DATASETS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache_scoreall
+export XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache_scoreall
+```
+
+# 7. Full-Test Results
+
+This section summarizes the final full-test-set metrics for each stage of the Chain-of-Exemplar pipeline.
+
+The final reporting table should contain three rows:
+- QG
+- RG
+- DG
+
+Each row reports:
+- BLEU-4
+- METEOR
+- ROUGE-L
+- BLEURT
+
+---
+
+## 7.1 QG full-test results
+
+QG metrics obtained on the full ScienceQA test set:
+
+- BLEU-4: 0.0431
+- METEOR: 0.2458
+- ROUGE-L: 0.2505
+- BLEURT: 0.3196
+
+---
+
+## 7.2 RG full-test results
+
+RG metrics obtained on the full ScienceQA test set:
+
+- BLEU-4: 0.5572
+- METEOR: 0.6266
+- ROUGE-L: 0.6381
+- BLEURT: 0.6321
+
+---
+
+## 7.3 DG full-test results
+
+Add the DG metrics here after the final scoring job completes.
+
+Template:
+
+- BLEU-4: TBD
+- METEOR: TBD
+- ROUGE-L: TBD
+- BLEURT: TBD
+
+---
+
+## 7.4 Final reporting table
+
+Use this table in the README or paper notes after all metrics are finalized:
+
+| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+|------|--------|--------|---------|--------|
+| QG   | 0.0431 | 0.2458 | 0.2505  | 0.3196 |
+| RG   | 0.5572 | 0.6266 | 0.6381  | 0.6321 |
+| DG   | TBD    | TBD    | TBD     | TBD    |
+
+DG is the final end-task result, but QG and RG are also reported because the full CoE reproduction is a staged pipeline.
+
