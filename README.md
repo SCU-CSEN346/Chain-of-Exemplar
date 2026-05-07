@@ -14,6 +14,7 @@
 - [x] Ran full CoE pipeline on finetuned model with 1 sample from test set and gathered evaluation metrics
 - [x] Ran full CoE pipeline on full test set: QG → RG → DG
 - [x] Launched final scoring job for QG + RG + DG through Slurm
+- [x] Pushed full test-set inference/evaluation scripts to GitHub
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
 - [ ] Update final README with final DG/full consolidated metrics once scoring job completes
 - [ ] Remove any files on github that no longer are being used
@@ -33,13 +34,28 @@ If your goal is to reproduce the paper, go directly to Section 5.
 
 Key scripts:
 
+## Repository Structure
+
+Key scripts:
+
 - `run_inference.py` → quickstart inference
-- `run_coe.slurm` → inference job
-- `build_scienceqa_problems.py` → dataset builder
+- `run_coe.slurm` → quickstart Slurm job
+- `build_scienceqa_problems.py` → ScienceQA dataset builder
 - `retrieve.py` → CER
-- `prepare_multitask.py` → multitask dataset
-- `slurm_fullcoe_lora.sbatch` → training job
-- `run_fullcoe_inference.py` → full CoE inference
+- `prepare_multitask.py` → multitask dataset builder
+- `slurm_fullcoe_lora.sbatch` → LoRA training job
+
+Full test-set pipeline:
+- `infer_qg_test_2ep.py` → full-test QG inference
+- `prepare_rg_test_2ep.py` → build RG full-test input from QG outputs
+- `infer_rg_test_2ep.py` → full-test RG inference
+- `prepare_dg_test_2ep.py` → build DG full-test input from QG + RG outputs
+- `infer_dg_test_2ep.py` → full-test DG inference
+- `scoring_local.py` → local evaluation script
+- `run_infer_qg_test_2ep.slurm` → Slurm QG job
+- `slurm_infer_rg_2ep.sh` → Slurm RG job
+- `slurm_infer_dg_2ep.sh` → Slurm DG job
+- `slurm_score_all_2ep.sh` → Slurm full scoring job
 
 ---
 
@@ -500,7 +516,7 @@ Config:
 - Model: `Qwen/Qwen-VL-Chat`
 - Method: LoRA
 - Precision: `fp16`
-- Epochs: 1
+- Epochs: Both 1 and 2 epochs were trained
 - GPU: Tesla V100
 
 Expected runtime:
@@ -510,10 +526,13 @@ Expected runtime:
 ```
 
 ## 5.8 Output
+Training produced LoRA adapter checkpoints such as:
+
 ```text
 output/fullcoe_lora_v100_1ep/
+output/fullcoe_lora_v100_2ep/
 ```
-Contains:
+These both contain:
 ```text
 adapter_model.bin
 checkpoint-*
@@ -528,6 +547,34 @@ On WAVE, group members can access it at:
 1 epoch: /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_1ep
 2 epoch: /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_2ep
 ```
+
+# 5.9 Optional 1-Sample Sanity-Check Workflow
+
+Before launching the full test-set pipeline, I also created a 1-sample QG → RG → DG workflow for debugging and validation.
+
+This was useful for:
+- confirming the finetuned model loaded correctly
+- verifying the chained QG → RG → DG logic
+- checking that evaluation worked on a tiny example before submitting long Slurm jobs
+
+Scripts used for the 1-sample workflow:
+- `infer_qg_test_2ep_1sample.py`
+- `infer_rg_test_2ep_1sample.py`
+- `infer_dg_test_2ep_1sample.py`
+- `prepare_dg_1sample.py`
+- `scoring_local_1sample.py`
+
+Slurm scripts used for the 1-sample workflow:
+- `slurm_infer_qg_1sample.sh`
+- `slurm_infer_rg_1sample.sh`
+- `slurm_infer_dg_1sample.sh`
+- `slurm_score_1sample.sh`
+- `slurm_score_dg_1sample.sh`
+
+Important:
+The 1-sample workflow was only used for debugging and sanity checking.
+The final reported reproduction results come from the full test-set pipeline in Section 6.
+
 ---
 
 # 6. Full CoE Inference Pipeline on the Full Test Set (QG → RG → DG)
@@ -867,4 +914,38 @@ Use this table in the README or paper notes after all metrics are finalized:
 | DG   | TBD    | TBD    | TBD     | TBD    |
 
 DG is the final end-task result, but QG and RG are also reported because the full CoE reproduction is a staged pipeline.
+
+# 8. Final Full-Test Workflow Summary
+
+The final full-test reproduction workflow is:
+
+1. Build ScienceQA:
+   `python build_scienceqa_problems.py`
+
+2. Run CER:
+   `python retrieve.py`
+
+3. Build multitask train data:
+   `python prepare_multitask.py`
+
+4. Train LoRA:
+   `sbatch slurm_fullcoe_lora.sbatch`
+
+5. Run QG on full test set:
+   `sbatch run_infer_qg_test_2ep.slurm`
+
+6. Build RG test set:
+   `python prepare_rg_test_2ep.py`
+
+7. Run RG on full test set:
+   `sbatch slurm_infer_rg_2ep.sh`
+
+8. Build DG test set:
+   `python prepare_dg_test_2ep.py`
+
+9. Run DG on full test set:
+   `sbatch slurm_infer_dg_2ep.sh`
+
+10. Run final scoring:
+   `sbatch slurm_score_all_2ep.sh`
 
