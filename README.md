@@ -17,6 +17,8 @@
 - [x] Pushed full test-set inference/evaluation scripts to GitHub
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
 - [ ] Update final README with final DG/full consolidated metrics once scoring job completes
+- [ ] Update Paper results
+- [ ] Implement improvements
 - [ ] Remove any files on github that no longer are being used
 
 ---
@@ -30,9 +32,6 @@ This README contains two workflows:
 
 If your goal is to reproduce the paper, go directly to Section 5.
 
-## Repository Structure
-
-Key scripts:
 
 ## Repository Structure
 
@@ -516,7 +515,8 @@ Config:
 - Model: `Qwen/Qwen-VL-Chat`
 - Method: LoRA
 - Precision: `fp16`
-- Epochs: Both 1 and 2 epochs were trained
+- Epochs trained: 1 and 2
+- Final full-test inference used: `output/fullcoe_lora_v100_2ep`
 - GPU: Tesla V100
 
 Expected runtime:
@@ -589,14 +589,22 @@ Important:
 - The same finetuned LoRA checkpoint is reused across QG, RG, and DG.
 - The later stages depend on files produced by earlier stages.
 
-Checkpoint used for full inference:
+Checkpoint used for all full-test-set inference stages in this section:
 
 `output/fullcoe_lora_v100_2ep`
+
+This 2-epoch checkpoint was reused for:
+- QG
+- RG
+- DG
 
 ---
 
 ## 6.1 Full-test-set files used
 
+- Model checkpoint used for all stages:
+  `output/fullcoe_lora_v100_2ep`
+  
 ### QG
 - Input:
   `data/ScienceQA_test_qg_blip2xl_angle.json`
