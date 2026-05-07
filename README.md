@@ -31,9 +31,12 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Create Personal ReadMe with setup+inference documentation + Update Group ReadMe with documentation
 - [x] Paper: Wrote Papers Methodology section in overleaf
 - [x] Built ScienceQA → CoE pipeline (CER + multitask QG/RG/DG)
-- [x] Created Slurm scripts for FULL CoE pipeline (slurm_fullcoe_lora.sbatch) to run training properly on GPU and started LoRA finetuning on the dataset
-- [x] Started full CoE pipeline on finetuned model with full test set and waiting for job to finish
+- [x] Created Slurm scripts for FULL CoE pipeline (training + inference + evaluation)
+- [x] Finetuned LoRA model on the CoE multitask dataset
 - [x] Ran full CoE pipeline on finetuned model with 1 sample from test set and gathered evaluation metrics
+- [x] Ran full CoE pipeline on full test set: QG → RG → DG
+- [x] Launched final scoring job for QG + RG + DG through Slurm
+- [x] Pushed full test-set inference/evaluation scripts to GitHub
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
 
 ### TARA - 33.3%: 
