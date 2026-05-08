@@ -17,9 +17,10 @@
 - [x] Pushed full test-set inference/evaluation scripts to GitHub
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
 - [x] Update final README with baseline result
-- [ ] Update Paper results
+- [x] Paper: Wrote section 6 (Paper Results) and updated other sections to be up to date with advances in project.
 - [ ] Implement improvements
 - [ ] Remove any files on github that no longer are being used
+- [ ] Improve Readme for personal branch and main branch
 
 ---
 
