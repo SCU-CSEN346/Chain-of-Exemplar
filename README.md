@@ -17,7 +17,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Ran Inference on HPC with HF Transformers successfully with image + prompt as input and a generated question
 - [x] Downloaded datasets and converted them to correct format for CoE
 - [x] Ran full CoE baseline with the question, rationale, and distractor generations with evaluation metrics for 1 sample from test set
-- [ ] Run full CoE baseline with the question, rationale, and distractor generations with evaluation metrics to use as a comparison for our improvements
+- [x] Run full CoE baseline with the question, rationale, and distractor generations with evaluation metrics to use as a comparison for our improvements
 - [ ] Since our dataset will not go on HF, add instructions for finding it to the readme
 - [ ] Improve this baseline with our own implementations
 
@@ -38,6 +38,8 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Launched final scoring job for QG + RG + DG through Slurm
 - [x] Pushed full test-set inference/evaluation scripts to GitHub
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
+- [x] Update final README with baseline result
+- [x] Paper: Wrote section 6 (Paper Results) and updated other sections to be up to date with advances in project.
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
