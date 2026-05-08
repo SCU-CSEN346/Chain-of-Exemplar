@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=fullcoe-1ep
+#SBATCH --job-name=fullcoe_2ep_retrievalfix
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=48:00:00
-#SBATCH --output=logs/fullcoe_1ep_%j.out
+#SBATCH --output=logs/fullcoe_2ep_retrievalfix_%j.out
 #SBATCH --mail-user=jloiretbernal@scu.edu
 #SBATCH --mail-type=BEGIN,END,FAIL,TIME_LIMIT
 

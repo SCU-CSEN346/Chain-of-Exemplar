@@ -3,7 +3,7 @@ from tqdm import tqdm
 from peft import AutoPeftModelForCausalLM
 from transformers import AutoTokenizer
 
-MODEL_PATH = "output/fullcoe_lora_v100_2ep"
+MODEL_PATH = "output/fullcoe_lora_v100_2ep_retrievalfix"
 DATA_PATH = "data/ScienceQA_test_qg_blip2xl_angle.json"
 OUT_PATH = "infer/pred_test_qg_2ep.json"
 
