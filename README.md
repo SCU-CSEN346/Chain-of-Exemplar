@@ -16,7 +16,7 @@
 - [x] Launched final scoring job for QG + RG + DG through Slurm
 - [x] Pushed full test-set inference/evaluation scripts to GitHub
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
-- [ ] Update final README with final DG/full consolidated metrics once scoring job completes
+- [x] Update final README with baseline result
 - [ ] Update Paper results
 - [ ] Implement improvements
 - [ ] Remove any files on github that no longer are being used
@@ -859,7 +859,7 @@ export HF_DATASETS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf
 export XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache_scoreall
 ```
 
-# 7. Full-Test Results
+# 7. RESULTS - BASELINE OF PAPER ON FULL TEST SET
 
 This section summarizes the final full-test-set metrics for each stage of the Chain-of-Exemplar pipeline.
 
@@ -874,54 +874,11 @@ Each row reports:
 - ROUGE-L
 - BLEURT
 
----
-
-## 7.1 QG full-test results
-
-QG metrics obtained on the full ScienceQA test set:
-
-- BLEU-4: 0.0431
-- METEOR: 0.2458
-- ROUGE-L: 0.2505
-- BLEURT: 0.3196
-
----
-
-## 7.2 RG full-test results
-
-RG metrics obtained on the full ScienceQA test set:
-
-- BLEU-4: 0.5572
-- METEOR: 0.6266
-- ROUGE-L: 0.6381
-- BLEURT: 0.6321
-
----
-
-## 7.3 DG full-test results
-
-Add the DG metrics here after the final scoring job completes.
-
-Template:
-
-- BLEU-4: TBD
-- METEOR: TBD
-- ROUGE-L: TBD
-- BLEURT: TBD
-
----
-
-## 7.4 Final reporting table
-
-Use this table in the README or paper notes after all metrics are finalized:
-
 | Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
 |------|--------|--------|---------|--------|
 | QG   | 0.0431 | 0.2458 | 0.2505  | 0.3196 |
 | RG   | 0.5572 | 0.6266 | 0.6381  | 0.6321 |
-| DG   | TBD    | TBD    | TBD     | TBD    |
-
-DG is the final end-task result, but QG and RG are also reported because the full CoE reproduction is a staged pipeline.
+| DG   | 0.3931 | 0.6821 | 0.5891  | 0.5586 |
 
 # 8. Final Full-Test Workflow Summary
 
