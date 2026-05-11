@@ -35,6 +35,17 @@ This README contains two workflows:
 
 If your goal is to reproduce the paper, go directly to Section 5.
 
+## Table of Contents
+
+- [1. HPC Environment Setup](#1-hpc-environment-setup)
+- [2. Git Setup for HPC](#2-git-setup-for-hpc)
+- [3. Quickstart Inference with HF Transformers (Sanity Check)](#3-quickstart-inference-with-hf-transformers-sanity-check)
+- [4. Troubleshooting](#4-troubleshooting)
+- [5. Full Chain-of-Exemplar Pipeline (Correct Baseline)](#5-full-chain-of-exemplar-pipeline-correct-baseline)
+- [6. Full CoE Inference Pipeline on the Full Test Set (QG → RG → DG)](#6-full-coe-inference-pipeline-on-the-full-test-set-qg--rg--dg)
+- [7. Results - Baseline of Paper on Full Test Set](#7-results---baseline-of-paper-on-full-test-set)
+- [8. Final Full-Test Workflow Summary](#8-final-full-test-workflow-summary)
+- [9. Improvements](#9-improvements)
 
 ## Repository Structure
 
