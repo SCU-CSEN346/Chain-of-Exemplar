@@ -26,15 +26,6 @@
 
 ---
 
-## ⚠️ IMPORTANT
-
-This README contains two workflows:
-
-- Section 3: Quickstart inference (sanity check only)
-- Sections 5–8: FULL Chain-of-Exemplar pipeline (used for reproduction)
-
-If your goal is to reproduce the paper, go directly to Section 5.
-
 ## Table of Contents
 
 - [1. HPC Environment Setup](#1-hpc-environment-setup)
