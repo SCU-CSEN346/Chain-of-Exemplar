@@ -934,6 +934,12 @@ Changes made:
 
 This improvement was intended to reduce repetitive retrieved exemplars and improve contextual relevance.
 
+| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+|------|--------|--------|---------|--------|
+| QG   | 0.0463 | 0.2380 | 0.2496  | 0.3093 |
+| RG   | 0.4957 | 0.5712 | 0.5926  | 0.5951 |
+| DG   | 0.3944 | 0.6853 | 0.5911  | 0.5633 |
+
 ## 9.2 Improvement 1b: CER question-aware retrieval
 
 A second CER improvement was then tested in `retrieve.py`.
@@ -945,6 +951,12 @@ Additional changes made:
 - kept lightweight diversity filtering for retrieved exemplars
 
 This version was designed to improve semantic alignment between the input question and the retrieved exemplars.
+
+| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+|------|--------|--------|---------|--------|
+| QG   | complete | complete | complete  | complete |
+| RG   | complete | complete | complete  | complete |
+| DG   | complete | complete | complete  | complete |
 
 ## 9.3 Important rerun dependency
 
