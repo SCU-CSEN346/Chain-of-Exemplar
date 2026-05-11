@@ -18,7 +18,9 @@
 - [x] Paper: Wrote section 6.2 (Full CoE Pipeline - 1-Sample Result)
 - [x] Update final README with baseline result
 - [x] Paper: Wrote section 6 (Paper Results) and updated other sections to be up to date with advances in project.
-- [ ] Implement improvements
+- [x] Implement improvement - CER - attempt 1
+- [x] Implement improvement - CER - attempt 2 (waiting for full pipeline to run to see results)
+- [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
 - [ ] Remove any files on github that no longer are being used
 - [ ] Improve Readme for personal branch and main branch
 
@@ -464,7 +466,7 @@ data/scienceqa/problems_blip2xl_angle.json
 ```
 
 ## 5.5 Run CER (Contextualized Exemplar Retrieval)
-
+NOTE: `retrieve.py` now has improvements from our team and is no longer the baseline retrieve.py
 ```bash
 python retrieve.py
 ```
@@ -915,3 +917,46 @@ The final full-test reproduction workflow is:
 10. Run final scoring:
    `sbatch slurm_score_all_2ep.sh`
 
+# 9. Improvements
+
+This section documents the CER improvements explored beyond the original baseline pipeline.
+The current improvement experiments are implemented primarily in retrieve.py and were pushed to the josephine branch.
+
+## 9.1 Improvement 1a: CER retrieval refinement
+
+The first improvement focused on the Contextualized Exemplar Retrieval (CER) stage in `retrieve.py`.
+
+Changes made:
+- used answer-context similarity instead of answer-question similarity
+- added modality-aware reranking
+- added lightweight duplicate-question filtering
+- preserved a fixed top-5 exemplar budget with fallback logic
+
+This improvement was intended to reduce repetitive retrieved exemplars and improve contextual relevance.
+
+## 9.2 Improvement 1b: CER question-aware retrieval
+
+A second CER improvement was then tested in `retrieve.py`.
+
+Additional changes made:
+- added question-text similarity to the retrieval score
+- kept answer similarity and context similarity
+- kept modality-aware reranking
+- kept lightweight diversity filtering for retrieved exemplars
+
+This version was designed to improve semantic alignment between the input question and the retrieved exemplars.
+
+## 9.3 Important rerun dependency
+
+If `retrieve.py` is modified for an improvement experiment, the following steps must be rerun:
+
+```bash
+python retrieve.py
+python prepare_multitask.py
+sbatch slurm_fullcoe_lora.sbatch
+sbatch run_infer_qg_test_2ep.slurm
+python prepare_rg_test_2ep.py
+sbatch slurm_infer_rg_2ep.sh
+python prepare_dg_test_2ep.py
+sbatch slurm_infer_dg_2ep.sh
+sbatch slurm_score_all_2ep.sh
