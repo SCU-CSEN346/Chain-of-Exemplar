@@ -960,3 +960,12 @@ sbatch slurm_infer_rg_2ep.sh
 python prepare_dg_test_2ep.py
 sbatch slurm_infer_dg_2ep.sh
 sbatch slurm_score_all_2ep.sh
+```
+
+## 9.4 Improvement model outputs
+
+Improvement 1a checkpoint (Can access on HPC):
+  `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_2ep_retrievalfix`
+
+Improvement 1b checkpoint:
+  `add path after training completes`
