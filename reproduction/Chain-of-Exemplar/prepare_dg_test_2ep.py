@@ -99,14 +99,42 @@ for qid in problems:
             image = 'Picture: <img>' + \
                     os.path.join(data_root, problems[qid]['split'], str(qid), problems[qid]['image']) + f'</img>\n'
             context = f'Context: ' + problems[qid]['hint'] + '\n' if problems[qid]['hint']!='' else ''
-            prompt = 'based on the above picture and question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).' \
-                if problems[qid]['hint']!='' else 'based on the above picture and question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).'
+            prompt = (
+			'based on the above picture and question with its answer obtained through reasoning, '
+			'generate 3 plausible but incorrect distractor answers.\n'
+			'The distractors should:\n'
+			'1. be scientifically or logically plausible\n'
+			'2. belong to the same category/type as the correct answer\n'
+			'3. avoid paraphrasing the correct answer\n'
+			'4. reflect common student mistakes or misconceptions\n'
+			'5. have similar length and grammar style as the correct answer\n'
+			'Format the output strictly as:\n'
+			'(1) distractor one\n'
+			'(2) distractor two\n'
+			'(3) distractor three\n'
+	       	)
+            # prompt = 'based on the above picture and question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).' \
+                # if problems[qid]['hint']!='' else 'based on the above picture and question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).'
             user_value = image + output_question + output_rationale + answer + prefix[:-2] + ' and ' + prompt + dg_example
             assistant_value = distractors
         else:
             context = 'Context: ' + problems[qid]['hint'] + '\n' if problems[qid]['hint']!='' else ''
-            prompt = 'based on the above question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).' \
-                if problems[qid]['hint']!='' else 'based on the above question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).'
+            prompt = (
+			'based on the above question with its answer obtained through reasoning, '
+			'generate 3 plausible but incorrect distractor answers.\n'
+			'The distractors should:\n'
+			'1. be scientifically or logically plausible\n'
+			'2. belong to the same category/type as the correct answer\n'
+			'3. avoid paraphrasing the correct answer\n'
+			'4. reflect common student mistakes or misconceptions\n'
+			'5. have similar length and grammar style as the correct answer\n'
+			'Format the output strictly as:\n'
+			'(1) distractor one\n'
+			'(2) distractor two\n'
+			'(3) distractor three\n'
+	       	)
+            # prompt = 'based on the above question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).' \
+                # if problems[qid]['hint']!='' else 'based on the above question with its answer obtained through reasoning, generate at least 1 plausible yet incorrect answers which should be similar and grammatically consistent with the correct answer and seperate them with numbers like (1) (2) (3).'
             user_value = output_question + output_rationale + answer + prefix[:-2] + ' and ' + prompt + dg_example
             assistant_value = distractors
         conversations = [
