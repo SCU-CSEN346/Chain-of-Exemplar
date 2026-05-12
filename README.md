@@ -978,8 +978,8 @@ sbatch slurm_score_all_2ep.sh
 
 ## 9.4 Improvement model outputs
 
-Improvement 1a checkpoint (Can access on HPC):
-  `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_2ep_retrievalfix`
+Improvement 1a checkpoint:
+- original checkpoint directory was later overwritten by Improvement 1b; 1a metrics were recorded before overwrite
 
 Improvement 1b checkpoint:
-  `add path after training completes`
+- `/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_2ep_retrievalfix`
