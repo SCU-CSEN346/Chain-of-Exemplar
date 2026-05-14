@@ -21,7 +21,8 @@
 - [x] Implement improvement - CER - attempt 1
 - [x] Implement improvement - CER - attempt 2 
 - [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
-- [ ] Improve Readme for personal branch and main branch
+- [x] Paper: Contributed to limitations, final results, and conclusion.
+- [x] Improve Readme for personal branch and main branch
 
 ---
 
