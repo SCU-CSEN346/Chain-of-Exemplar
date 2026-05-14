@@ -152,5 +152,57 @@ Dataset size:
 
 ### Original Issue
 The original retrieval pipeline had multiple issues:
--
+- missing angle_emb
+- deprecated HuggingFace APIs
+- invalid retrieval thresholds
+- retrieval runtime was extremely slow (~11 hrs)
+- retrieval produces 0 samples
+
+### Fixes Applied
+Installed:
+```bash
+pip install angle-emb
+```
+Fixed:
+- deprecated 'huggingface_hub' usage
+- incorrect 'data_root'
+- retrieval thresholding
+- missing embedidng generation
+- invalid retrieval save paths
+
+### Retrieval Runtime Optimization
+
+Original Implementation:
+- pairwise Python similarity loops
+- runtime estimated 7-11 hrs
+
+Improved Implemantation:
+- vectorized embedding similarity computation
+- GPU-based retrieval scoring
+
+Runtime after optimization:
+```text
+~ 3 seconds
+```
+
+### Retrieval Verification
+
+Generated:
+
+```text
+data/scienceqa/problems_blip2xl_angle.json
+```
+
+Verified retrieved exemplars:
+
+```text
+with relevant_question: 4373
+```
+
+Example:
+
+```text
+train_3:
+['train_637', 'train_850', 'train_1058', 'train_5039', 'train_5447']
+```
 
