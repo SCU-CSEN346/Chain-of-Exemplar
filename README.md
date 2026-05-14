@@ -28,13 +28,14 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 
 ---
 # Member Contributions: 
-### OVERALL PROJECT TO DO: 
+### OVERALL PROJECT STATUS: 
 - [ ] Finalize improvements
-- [ ] Finalize Github
-- [ ] Finalize Paper
-- [ ] Prepare a Demo 
-- [ ] Prepare Presentation 
-- [ ] Prepare Poster
+- [ ] Finalize Github 
+- [ ] Finalize Paper 
+- [ ] Create Demo
+- [ ] Create Presentation 
+- [ ] Create Poster
+
 
 ### JOSEPHINE - 33.3%: 
 - [x] Set up project in HPC with VSCODE
@@ -58,8 +59,6 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Implement improvement - CER - attempt 1
 - [x] Implement improvement - CER - attempt 2 (waiting for full pipeline to run to see results)
 - [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
-- [x] Paper: Contributed to limitations, final results, and conclusion.
-- [x] Improve Readme for personal branch and main branch
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
@@ -244,7 +243,7 @@ patch the generated RG/DG JSON so image paths use the shorter format:
 data/images/test/1.png
 ```
 
-The same issue can occur for `train`, `validation`, and `test` image paths. 
+The same issue can occur for `train`, `validation`, and `test` image paths. See Josephine's personal README for the detailed debugging notes and exact patch commands.
 
 ---
 

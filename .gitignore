@@ -1,0 +1,20 @@
+# Virtual environments
+venv/
+reproduction/Chain-of-Exemplar/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs and env files
+*.log
+.env
+
+# Data / outputs
+outputs/
+data/
+.cache/
+
+# Model files
+*.pt
+*.bin
