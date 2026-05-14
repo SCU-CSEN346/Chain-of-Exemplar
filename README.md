@@ -103,11 +103,11 @@ What is the force of gravity that attracts two objects with mass towards each ot
 
 -----------
 
-# 🔬 Local Full CoE Reproduction Progress (RTX 3090)
+## 🔬 Local Full CoE Reproduction Progress (RTX 3090)
 
-## ✔️ Completed Steps
+### ✔️ Completed Steps
 
-### 1. Local Environment Setup
+#### 1. Local Environment Setup
 Created isolated Python environment:
 ```bash
 python3 -m venv coe_local
@@ -131,7 +131,7 @@ Installed compatible NumPy version:
 pip install "numpy<2"
 ```
 
-## ✔️ ScienceQA Dataset Build
+### ✔️ ScienceQA Dataset Build
 Generated reversed ScienceQA dataset locally:
 
 ```bash
@@ -148,9 +148,9 @@ Dataset size:
 21208 samples
 ```
 
-## ✔️ Contextualized Exemplar Retrieval (CER)
+### ✔️ Contextualized Exemplar Retrieval (CER)
 
-### Original Issue
+#### Original Issue
 The original retrieval pipeline had multiple issues:
 - missing angle_emb
 - deprecated HuggingFace APIs
@@ -158,7 +158,7 @@ The original retrieval pipeline had multiple issues:
 - retrieval runtime was extremely slow (~11 hrs)
 - retrieval produces 0 samples
 
-### Fixes Applied
+#### Fixes Applied
 Installed:
 ```bash
 pip install angle-emb
@@ -170,7 +170,7 @@ Fixed:
 - missing embedidng generation
 - invalid retrieval save paths
 
-### Retrieval Runtime Optimization
+#### Retrieval Runtime Optimization
 
 Original Implementation:
 - pairwise Python similarity loops
@@ -185,7 +185,7 @@ Runtime after optimization:
 ~ 3 seconds
 ```
 
-### Retrieval Verification
+#### Retrieval Verification
 
 Generated:
 
@@ -206,15 +206,15 @@ train_3:
 ['train_637', 'train_850', 'train_1058', 'train_5039', 'train_5447']
 ```
 
-## ✔️ QG Dataset Preparation
+### ✔️ QG Dataset Preparation
 
-### Original Issues:
+#### Original Issues:
 'prepare_qg.py' contained:
 - incorrect split names ('val' instead of 'validation')
 - broken multimodal image paths
 - empty generated datasets
 
-### Fixes Applied
+#### Fixes Applied
 Changed;
 ```python
 split = 'val
@@ -233,7 +233,7 @@ to direct image paths:
 problem['image']
 ```
 
-### Generated Validation Dataset
+#### Generated Validation Dataset
 Command:
 ```bash
 python prepare_qg.py
@@ -245,7 +245,7 @@ data/ScienceQA_validation_qg_norationale.json
 ```
 Samples = 4241
 
-### Generated Training Dataset
+#### Generated Training Dataset
 Generated:
 ```text
 data/ScienceQA_train_qg_norationale.json
@@ -259,7 +259,7 @@ Answer: West Virginia
 generate a question based on the above picture and the corresponding answer.
 ```
 
-## ✔️ LoRA Fine-Tuning Setup
+### ✔️ LoRA Fine-Tuning Setup
 
 Created local QG LoRA training script:
 ```bash
@@ -288,7 +288,7 @@ print("tokenizer loaded")
 PY
 ```
 
-## ✔️ Tiny QG LoRA Sanity Training
+### ✔️ Tiny QG LoRA Sanity Training
 
 Created tiny dataset:
 
@@ -315,15 +315,17 @@ This verified:
 - LoRA compatibility
 - local GPU training pipeline
 
-# 🎯 DG (Distractor Generation) Improvement
+## 🎯 DG (Distractor Generation) Improvement
 
-## Motivation
+### Motivation
+
 Baseline CoE distractor generation often:
 - generated only one distractor
 - produced semantically weak distractors
 - generated repetitive or trivial distractors
 
-## Proposed DG Prompt Improvements
+### Proposed DG Prompt Improvements
+
 Modified prompts to encourage:
 - multiple distractors
 - grammatical consistency
@@ -331,13 +333,14 @@ Modified prompts to encourage:
 - reduced trivial distractors
 - improved distractor plausibility
 
-## Current Status
+### Current Status
+
 Prompt reformulations implemented locally.
 Full end-to-end DG evaluation using generated QG/RG outputs is currently running.
 
-# ⏳ Currently Running
-## Full QG LoRA Fine-Tuning
-Running:
+### ✔️ Full QG LoRA Fine-Tuning
+
+Successfully completed local QG LoRA fine-tuning using:
 ```bash
 bash finetune/train_qg_lora_local.sh
 ```
@@ -347,10 +350,81 @@ Configuration:
 - 1 epoch
 - RTX 3090
 
-Estimated Runtime:
+Runtime:
 ```text
-~10-12 hrs
+~12 hrs
 ```
+
+Generated output:
+```text
+output/qg_lora_local
+```
+
+Saved artifacts:
+- adapter_model.bin
+- adapter_config.json
+- checkpoint-1000
+- tokenizer files
+- trainer state
+
+### ✔️ QG Inference Verification
+
+Created local QG inference pipeline:
+
+```text
+infer_qg_local.py
+```
+
+Verified:
+- model loading
+- multimodal image loading
+- LoRA adapter inference
+- validation dataset formatting
+- generated predictions
+
+Tiny validation inference test:
+
+```text
+5/5 samples completed successfully
+```
+
+Example prediction:
+
+```text
+Input Answer:
+"The snoring is loud."
+
+Generated Question:
+"What information supports the conclusion that the snoring is loud?"
+```
+
+## ⏳ Currently Running
+### Full Validation of QG Inference
+
+Running:
+```bash
+python infer_qg_local.py
+```
+
+Output target:
+```text
+infer/pred_validation_qg_local.json
+```
+
+This stage generates validation set question predictions for downstream RG preparation and evaluation.
+
+## ⏭️ Remaining Steps
+
+- [ ] Complete full validation QG inference
+- [ ] Prepare RG datasets using generated QG outputs
+- [ ] Fine-tune RG model
+- [ ] Run RG inference
+- [ ] Prepare DG datasets
+- [ ] Implement improved DG prompt variants
+- [ ] Run DG inference
+- [ ] Evaluate BLEU-4 / METEOR / ROUGE-L / BLEURT
+- [ ] Compare baseline vs improved DG outputs
+- [ ] Finalize qualitative distractor comparisons
 
 # ⚠️ Notes
 Due to compute and runtime limitations, some experiments are still in progress. Current work focuses on achieving a fully reproducible local CoE pipeline and improving distractor generation quality.
