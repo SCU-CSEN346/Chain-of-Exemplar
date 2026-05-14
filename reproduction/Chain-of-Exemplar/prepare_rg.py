@@ -36,9 +36,7 @@ def build_example(problem,id):
     for i, choice in enumerate(choices):
         distractors += f'({i + 1}) {choice}\n'
     if problem['image'] != None:
-        image = 'Picture: <img>' + \
-                os.path.join(data_root, problem['split'], str(id), problem[
-                    'image']) + f'</img>\n'
+        image = 'Picture: <img>' + problem['image'] + f'</img>\n'
         context = f'Context: ' + problem['hint'] + '\n' if problem['hint'] != '' else ''
         # qg_prompt = 'Please generate a question from this picture, context and the corresponding answer.' if \
         # problem['hint'] != '' else 'Please generate a question from this picture and the corresponding answer.'
@@ -67,12 +65,12 @@ def build_example(problem,id):
         dg = '\nExample:\n' + context + f'Question: {question}\n' + f'Reasoning: {rationale}\n' + answer + f'Distractors: {distractors}'
     return qg, rg, dg
 
-split = 'val'
-data_root = '/data/luohh/acl23/data/scienceqa/'
-output_questions = json.load(open(f'infer/pred_{split}_qg_imageonly.json'))
+split = 'validation'
+data_root = 'data/scienceqa/'
+output_questions = json.load(open(f'infer/pred_{split}_qg_local.json'))
 problems = json.load(open(os.path.join(data_root, 'problems_blip2xl_angle.json')))
 save_list = []
-save_root = f'data/ScienceQA_{split}_rg_imageonly.json'
+save_root = f'data/ScienceQA_{split}_rg_local.json'
 id = 0
 for qid in problems:
     if problems[qid]['split'] == split:
@@ -87,8 +85,7 @@ for qid in problems:
             most_relevant_question = problems[qid]["relevant_question"][0]
             qg_example, rg_example, dg_example = build_example(problems[most_relevant_question],most_relevant_question)
         if problems[qid]['image'] != None:
-            image = 'Picture: <img>' + \
-                    os.path.join(data_root, problems[qid]['split'], str(qid), problems[qid]['image']) + f'</img>\n'
+            image = 'Picture: <img>' + problems[qid]['image'] + f'</img>\n'
             context = f'Context: ' + problems[qid]['hint'] + '\n' if problems[qid]['hint']!='' else ''
             answer = 'Answer: ' + problems[qid]['choices'][problems[qid]['answer']] + '\n'
             rationale = problems[qid]['lecture'] + problems[qid]['solution']

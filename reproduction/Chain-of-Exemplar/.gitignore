@@ -12,3 +12,10 @@ build
 Qwen-VL-Chat/
 Qwen-VL-Chat-Int4/
 SimSun.ttf
+
+# local env / generated artifacts
+coe_local/
+data/
+output/
+retrieve/
+infer/*.json
