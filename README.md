@@ -59,6 +59,9 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Implement improvement - CER - attempt 1
 - [x] Implement improvement - CER - attempt 2 (waiting for full pipeline to run to see results)
 - [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
+- [x] Improve Readme for personal branch and main branch
+- [x] Merge my branch with main
+- [x] Paper: Contributed to the following sections: Final Results, Limitations, Conclusion
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
