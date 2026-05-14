@@ -13,6 +13,10 @@
 - [x] Fixed Conda setup to work for LoRA fine-tuning on HPC
 - [x] Have baseline model running on HPC
 - [x] Wrote Paper Evaluation section (5) in paper
+- [x] Wrote self-consistency rationale generation scripts (1 GPU, 2 GPUs, and batched/chunked)
+- [x] Extensive prompt engineering and hyperparameter tuning to make Qwen tokenizer compatible with self-consistency and reduce hallucinations at generation time
+- [x] Described self-consistency in paper (7.2)
+- [x] Began ethics discussion in paper (10)
 
 ## How to Run Inference on HPC
 
