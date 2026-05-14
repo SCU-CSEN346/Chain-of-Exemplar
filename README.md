@@ -1,3 +1,18 @@
+# Chain-of-Exemplar — Group README
+
+This README provides the setup and execution instructions needed to reproduce our Chain-of-Exemplar pipeline. 
+
+## Table of Contents
+
+- [Model Description](#model-description-chain-of-exemplar-for-mcq-generation)
+- [Member Contributions](#member-contributions)
+- [Installation Instructions](#installation-instructions)
+- [Usage Instructions](#usage-instructions)
+- [Expected Output](#expected-output)
+- [Improvements](#improvements)
+
+---
+
 # Model Description: Chain-of-Exemplar for MCQ Generation
 Option 2 - Improving upon Chain of Exemplar ([Luo et. al. 2024](https://aclanthology.org/2024.acl-long.432.pdf))
 
@@ -13,13 +28,13 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 
 ---
 # Member Contributions: 
-### OVERALL PROJECT STATUS: 
-- [x] Ran Inference on HPC with HF Transformers successfully with image + prompt as input and a generated question
-- [x] Downloaded datasets and converted them to correct format for CoE
-- [x] Ran full CoE baseline with the question, rationale, and distractor generations with evaluation metrics for 1 sample from test set
-- [x] Run full CoE baseline with the question, rationale, and distractor generations with evaluation metrics to use as a comparison for our improvements
-- [ ] Since our dataset will not go on HF, add instructions for finding it to the readme
-- [ ] Improve this baseline with our own implementations
+### OVERALL PROJECT TO DO: 
+- [ ] Finalize improvements
+- [ ] Finalize Github
+- [ ] Finalize Paper
+- [ ] Prepare a Demo 
+- [ ] Prepare Presentation 
+- [ ] Prepare Poster
 
 ### JOSEPHINE - 33.3%: 
 - [x] Set up project in HPC with VSCODE
@@ -43,6 +58,8 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Implement improvement - CER - attempt 1
 - [x] Implement improvement - CER - attempt 2 (waiting for full pipeline to run to see results)
 - [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
+- [x] Paper: Contributed to limitations, final results, and conclusion.
+- [x] Improve Readme for personal branch and main branch
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
@@ -83,342 +100,209 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Observed semantic drift where generated questions preserved answers but changed the educational objective
 - [x] Implementing DG prompt improvements for more plausible and semantically consistent distractors
 - [x] Completed section 7.3 (Improvement 3: Enhanced Distractor Generation) in the overleaf document
-- [x] Added to the Limitations and Ethics section of the document 
---- 
-# Installation Instructions: List dependencies and how to install them.
-⚠️ Note: The original repository ([Github Repo](https://github.com/Luohh5/Chain-of-Exemplar)) is not directly reproducible. See below for all fixes applied.
+- [x] Added to the Limitations and Ethics section of the document
 
-## 1. HPC Environment Setup
+---
 
-### 1.1 Connect to WAVE
+# Installation Instructions
+
+These instructions assume a Linux/HPC environment with access to an NVIDIA GPU. Our full reproduction was run on SCU WAVE using Python 3.10, CUDA-compatible PyTorch, Qwen/Qwen-VL-Chat, LoRA fine-tuning, and Slurm jobs.
+
+## 1. Clone the repository
 
 ```bash
-ssh your_username@login.wave.scu.edu
+git clone https://github.com/SCU-CSEN346/Chain-of-Exemplar.git
+cd Chain-of-Exemplar/reproduction/Chain-of-Exemplar
 ```
 
-### 1.2 Load Anaconda
+## 2. Create and activate the conda environment
+
+On WAVE, load Anaconda first:
 
 ```bash
 module purge
 module load Anaconda3
 ```
 
-### 1.3 Create the conda environment in project storage
+Create and activate the environment. On shared HPC storage, prefer a project path rather than home storage.
 
 ```bash
-conda create --prefix /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu python=3.10 -y
+conda create --prefix /path/to/coe_gpu python=3.10 -y
+conda activate /path/to/coe_gpu
 ```
 
-You can activate it:
+## 3. Set cache paths
+
+Set cache directories outside the home directory to avoid quota errors. Replace the paths below with your own project storage.
 
 ```bash
-conda activate /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu
+export HF_HOME=/path/to/hf_cache
+export TRANSFORMERS_CACHE=$HF_HOME
+export HF_DATASETS_CACHE=$HF_HOME
+export HUGGINGFACE_HUB_CACHE=$HF_HOME/hub
+export SENTENCE_TRANSFORMERS_HOME=$HF_HOME/sentence_transformers
+export PIP_CACHE_DIR=/path/to/pip_cache
+export TMPDIR=/path/to/tmp
+mkdir -p "$HF_HOME" "$HUGGINGFACE_HUB_CACHE" "$SENTENCE_TRANSFORMERS_HOME" "$PIP_CACHE_DIR" "$TMPDIR"
 ```
 
-### 1.4 Create cache and temp folders
+## 4. Install dependencies
 
-These avoid home-directory quota issues on the HPC.
+Install PyTorch with CUDA 11.8 support:
 
 ```bash
-mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
-mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
-mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
-mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/mpl_cache
-mkdir -p /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache
+pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### 1.5 Install PyTorch
-
-Install the CUDA 11.8 build:
+Install the required packages:
 
 ```bash
-TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
-PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache \
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -m pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+pip install transformers==4.32.0 peft==0.4.0 accelerate==0.21.0 datasets tqdm sentencepiece einops matplotlib tiktoken transformers_stream_generator "numpy<2"
+pip install deepspeed==0.9.5
+pip install pillow jsonlines requests==2.32.3
+pip install huggingface-hub==0.25.2
+pip install sentence-transformers==2.2.2
 ```
 
-### 1.6 Install required Python packages
+Important notes:
+- Use `Qwen/Qwen-VL-Chat` as the base model.
+- Do **not** use `Qwen/Qwen-VL-Chat-Int4` for this setup.
+- Do **not** install the newest `sentence-transformers`, because it may upgrade `transformers` and break the Qwen-VL stack.
+
+## 5. Verify versions
 
 ```bash
-TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
-PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache \
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -m pip install \
-transformers==4.32.0 \
-peft==0.4.0 \
-accelerate==0.21.0 \
-datasets \
-tqdm \
-sentencepiece \
-einops \
-matplotlib \
-tiktoken \
-transformers_stream_generator \
-"numpy<2"
-```
-
-### 1.7 Verify versions
-
-Expected:
-
-```text
-torch 2.0.1+cu118
-transformers 4.32.0
-peft 0.4.0
-numpy 1.26.4
-```
-
----
-## 2. Git Setup for HPC
-
-### 2.1. Step 1 - Create `.gitignore`
-
-Create or edit `.gitignore` (e.g. `nano .gitignore`) and add:
-
-```gitignore
-# Virtual environments
-venv/
-reproduction/Chain-of-Exemplar/venv/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Logs and env files
-*.log
-.env
-
-# Data / outputs
-outputs/
-data/
-.cache/
-
-# Model files
-*.pt
-*.bin
-```
-
-In **nano**: save with `Ctrl + O` → Enter → exit with `Ctrl + X`.
-
-### 2.2. Step 2 - Commit `.gitignore`
-
-```bash
-git add .gitignore
-git commit -m "add gitignore to ignore venv"
-git push
-```
----
-## 3. Quickstart Inference with Hugging Face Transformers
-This part explains how to run our baseline of Chain-of-Exemplar inference of their paper on the WAVE HPC cluster using the Hugging Face Transformers quickstart. This does not yet include the full CoE pipeline.
-
-### Important notes:
-- Use `Qwen/Qwen-VL-Chat`
-- Do **not** use `Qwen/Qwen-VL-Chat-Int4` for this setup
-- This setup runs inference with the adapter model: `Lhh123/coe_multitask_blip2xl_angle_2ep`
-- The quickstart does **not** require datasets but will once the full CoE pipeline is run
-
-
-### 3.1 Download the adapter model
-
-Do not use plain git clone from Hugging Face unless Git LFS is available and working.
-
-Use snapshot_download instead:
-
-```bash
-HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache \
-HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub \
-XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache \
-TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp \
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python - <<'PY'
-from huggingface_hub import snapshot_download
-
-snapshot_download(
-    repo_id="Lhh123/coe_multitask_blip2xl_angle_2ep",
-    local_dir="/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep",
-    allow_patterns=[
-        "adapter_config.json",
-        "adapter_model.bin",
-        "README.md",
-        "qwen.tiktoken",
-        "special_tokens_map.json",
-        "tokenization_qwen.py",
-        "tokenizer_config.json",
-    ],
-)
+python - <<'PY'
+import torch, transformers, huggingface_hub, datasets, sentence_transformers
+from transformers import Trainer
+print("torch:", torch.__version__)
+print("transformers:", transformers.__version__)
+print("huggingface-hub:", huggingface_hub.__version__)
+print("datasets:", datasets.__version__)
+print("sentence-transformers:", sentence_transformers.__version__)
+print("Trainer import OK")
 PY
 ```
 
-### 3.2 Fix the adapter config
-
-Edit:
-```bash
-nano /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep/adapter_config.json
-```
-
-Set:
-```json
-"base_model_name_or_path": "Qwen/Qwen-VL-Chat"
-```
-
-This is the final working base model.
-
-### 3.3 Add a test image
-
-Use a .jpg, .jpeg, or .png image and add it to your project folder with name test.jpg. In our case that was:
-
-```bash
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg
-```
-
-### 3.4 Create or use run_inference.py
-
-At this step, you can either:
-
-- use the run_inference.py file already pushed to GitHub (Josephine's branch), or
-- create the file yourself as described below
-
-If you want to create it yourself:
-```bash
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-nano run_inference.py
-```
-
-Use:
-```python
-import torch
-from peft import AutoPeftModelForCausalLM
-from transformers import AutoTokenizer
-
-IMAGE_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/test.jpg"
-MODEL_PATH = "/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_multitask_blip2xl_angle_2ep"
-
-tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_PATH,
-    trust_remote_code=True
-)
-
-model = AutoPeftModelForCausalLM.from_pretrained(
-    MODEL_PATH,
-    device_map="auto",
-    torch_dtype=torch.float16,
-    trust_remote_code=True
-).eval()
-
-query = f"Picture: <img>{IMAGE_PATH}</img>\nGenerate a question based on the picture."
-
-response, history = model.chat(
-    tokenizer,
-    query=query,
-    history=None
-)
-
-print(response)
-```
-
-This prompt asks the model to generate a question from the image.
-
----
-
-## 4. Slurm GPU Job
-
-### 4.1 Create or use run_coe.slurm
-
-At this step, you can either:
-
-- use the run_coe.slurm file already pushed to GitHub (Josephine's branch), or
-- create the file yourself as described below
-
-If you want to create it yourself:
-```bash
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-nano run_coe.slurm
-```
-
-Use:
-```bash
-#!/bin/bash
-#SBATCH --job-name=coe_infer
-#SBATCH --output=coe_infer_%j.out
-#SBATCH --error=coe_infer_%j.err
-#SBATCH --time=01:00:00
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:volta:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
-
-module load Anaconda3
-
-export HF_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
-export TRANSFORMERS_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache
-export HUGGINGFACE_HUB_CACHE=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/hf_cache/hub
-export MPLCONFIGDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/mpl_cache
-export XDG_CACHE_HOME=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/xdg_cache
-export PIP_CACHE_DIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/pip_cache
-export TMPDIR=/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/tmp
-
-mkdir -p $HF_HOME
-mkdir -p $HUGGINGFACE_HUB_CACHE
-mkdir -p $MPLCONFIGDIR
-mkdir -p $XDG_CACHE_HOME
-mkdir -p $PIP_CACHE_DIR
-mkdir -p $TMPDIR
-
-cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
-
-echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
-nvidia-smi
-
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python --version
-
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python -c "import torch, transformers, peft; print('torch', torch.__version__); print('cuda?', torch.cuda.is_available()); print('transformers', transformers.__version__); print('peft', peft.__version__)"
-
-/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/coe_gpu/bin/python run_inference.py
-```
-
-Important: `#SBATCH --gres=gpu:volta:1` is required so Slurm allocates a real GPU.
-
-### 4.2 Run the job
-
-Submit:
-```bash
-sbatch run_coe.slurm
-```
-
-Check status:
-```bash
-squeue -u $USER
-```
-
-After it finishes:
-```bash
-cat coe_infer_<JOBID>.out
-cat coe_infer_<JOBID>.err
-```
-
----
-
-## 5. Example Successful Run
-
-A successful run looked like this:
+Expected versions:
 
 ```text
 torch 2.0.1+cu118
-cuda? True
 transformers 4.32.0
-peft 0.4.0
-What is the difference between the encoder and the decoder in a transformer?
+huggingface-hub 0.25.2
+sentence-transformers 2.2.2
 ```
 
-That output is expected because the quickstart prompt asks the model to generate a question from the image. In this case, I uploaded a graph of what a encoder-decoder looks like.
+---
+
+# Usage Instructions
+
+All commands should be run from:
+
+```bash
+cd /path/to/Chain-of-Exemplar/reproduction/Chain-of-Exemplar
+conda activate /path/to/coe_gpu
+```
+
+For GPU jobs on WAVE or another cluster, use Slurm rather than running long jobs on the login node.
+
+## Full CoE baseline pipeline
+
+Run the full pipeline in this order:
+
+| Step | Command | Purpose |
+|------|---------|---------|
+| 1 | `python build_scienceqa_problems.py` | Build ScienceQA problem files |
+| 2 | `python retrieve.py` | Run Contextualized Exemplar Retrieval (CER) |
+| 3 | `python prepare_multitask.py` | Build multitask QG/RG/DG training data |
+| 4 | `sbatch slurm_fullcoe_lora.sbatch` | Fine-tune the LoRA model |
+| 5 | `sbatch run_infer_qg_test_2ep.slurm` | Run question generation on the full test set |
+| 6 | `python prepare_rg_test_2ep.py` | Build RG test inputs from QG outputs |
+| 7 | `sbatch slurm_infer_rg_2ep.sh` | Run rationale generation |
+| 8 | `python prepare_dg_test_2ep.py` | Build DG test inputs from QG + RG outputs |
+| 9 | `sbatch slurm_infer_dg_2ep.sh` | Run distractor generation |
+| 10 | `sbatch slurm_score_all_2ep.sh` | Score QG, RG, and DG outputs |
+
+Monitor jobs with:
+
+```bash
+squeue -u $USER
+tail -n 40 logs/<jobname>_<JOBID>.err
+```
+
+## Important path note for RG/DG
+
+If RG or DG fails with a `FileNotFoundError` involving paths like:
+
+```text
+data/scienceqa/test/test_1/data/images/test/1.png
+```
+
+patch the generated RG/DG JSON so image paths use the shorter format:
+
+```text
+data/images/test/1.png
+```
+
+The same issue can occur for `train`, `validation`, and `test` image paths. 
 
 ---
 
-# Usage Instructions: How to run the main script and reproduce the results.
-Load the dataset - [Dataset](https://huggingface.co/datasets/Lhh123/CoE_ScienceQA)
+# Expected Output
 
-Dataset setup has been started using the authors’ released CoE ScienceQA dataset. Full loading and preprocessing instructions will be added after baseline dataset integration is finalized.
+## Main generated files
 
-In progress - will fill in once we are able to get a full CoE baseline
+| Stage | Output file |
+|-------|-------------|
+| QG | `infer/pred_test_qg_2ep.json` |
+| RG | `infer/pred_test_rg_2ep.json` |
+| DG | `infer/pred_test_dg_2ep.json` |
+| Scoring | `logs/scoreall2ep_<JOBID>.out` |
+
+The prediction files are JSON lists with entries similar to:
+
+```json
+{"id": "qg_test_0", "response": "What is the apostrophe used for?"}
+```
+
+## Baseline full-test metrics
+
+The 2-epoch LoRA baseline reproduced on the full ScienceQA test set produced:
+
+| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+|------|--------|--------|---------|--------|
+| QG | 0.0431 | 0.2458 | 0.2505 | 0.3196 |
+| RG | 0.5572 | 0.6266 | 0.6381 | 0.6321 |
+| DG | 0.3931 | 0.6821 | 0.5891 | 0.5586 |
 
 ---
-# Expected Output: Example results or sample output.
-In progress - will fill in once we are able to get a baseline of the full CoE pipeline
+
+# Improvements
+
+This section briefly summarizes improvement experiments beyond the baseline. More detailed notes, debugging history, and exact implementation details are available in the relevant team member branches and personal READMEs.
+
+## Josephine: CER retrieval improvements
+
+Josephine's improvement focused on the Contextualized Exemplar Retrieval (CER) stage in `retrieve.py`. The final version added question-aware retrieval scoring while keeping answer/context similarity, modality-aware reranking, and lightweight diversity filtering.
+
+The best CER improvement run improved RG and DG compared with the baseline, while QG showed mixed results.
+
+| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+|------|--------|--------|---------|--------|
+| QG | 0.0355 | 0.2512 | 0.2524 | 0.3205 |
+| RG | 0.6896 | 0.7375 | 0.7556 | 0.6908 |
+| DG | 0.4313 | 0.7384 | 0.6156 | 0.5886 |
+
+Shared Improvement 1b checkpoint on WAVE:
+
+```text
+/WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_2ep_retrievalfix
+```
+
+## Tara
+
+_To be added by Tara._
+
+## Kajal
+
+_To be added by Kajal._
