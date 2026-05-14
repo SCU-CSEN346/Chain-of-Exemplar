@@ -206,3 +206,151 @@ train_3:
 ['train_637', 'train_850', 'train_1058', 'train_5039', 'train_5447']
 ```
 
+## ✔️ QG Dataset Preparation
+
+### Original Issues:
+'prepare_qg.py' contained:
+- incorrect split names ('val' instead of 'validation')
+- broken multimodal image paths
+- empty generated datasets
+
+### Fixes Applied
+Changed;
+```python
+split = 'val
+```
+to:
+```pythin
+split = 'validation'
+```
+
+Fixed image formatting from:
+```python
+os.path.join(data_root, ...)
+```
+to direct image paths:
+```python
+problem['image']
+```
+
+### Generated Validation Dataset
+Command:
+```bash
+python prepare_qg.py
+```
+
+Generated:
+```text
+data/ScienceQA_validation_qg_norationale.json
+```
+Samples = 4241
+
+### Generated Training Dataset
+Generated:
+```text
+data/ScienceQA_train_qg_norationale.json
+```
+Samples = 12726
+
+Example Prompt:
+```text
+Picture: <img>data/images/train/0.png</img>
+Answer: West Virginia
+generate a question based on the above picture and the corresponding answer.
+```
+
+## ✔️ LoRA Fine-Tuning Setup
+
+Created local QG LoRA training script:
+```bash
+cp finetune/finetune_lora_single_gpu.sh finetune/train_qg_lora_local.sh
+```
+
+Updated:
+- dataset paths
+- output paths
+- epochs
+- local output directories
+
+Installed DeepSpeed:
+```bash
+pip install deepspeed==0.10.3
+```
+Verified Qwen tokenizer loading:
+```bash
+python - <<'PY'
+from transformers import AutoTokenizer
+tok = AutoTokenizer.from_pretrained(
+    "Qwen/Qwen-VL-Chat",
+    trust_remote_code=True
+)
+print("tokenizer loaded")
+PY
+```
+
+## ✔️ Tiny QG LoRA Sanity Training
+
+Created tiny dataset:
+
+```bash
+data/ScienceQA_train_qg_tiny20.json
+```
+
+Tiny training successfully completed using:
+- Qwen-VL-Chat
+- LoRA
+- RTX 3090
+
+Training logs:
+
+```text
+{'loss': 1.6989, 'learning_rate': 1e-05, 'epoch': 0.4}
+{'loss': 1.6007, 'learning_rate': 0.0, 'epoch': 0.8}
+```
+
+This verified:
+- multimodal dataset formatting
+- image loading
+- Qwen-VL loading
+- LoRA compatibility
+- local GPU training pipeline
+
+# 🎯 DG (Distractor Generation) Improvement
+
+## Motivation
+Baseline CoE distractor generation often:
+- generated only one distractor
+- produced semantically weak distractors
+- generated repetitive or trivial distractors
+
+## Proposed DG Prompt Improvements
+Modified prompts to encourage:
+- multiple distractors
+- grammatical consistency
+- semantic similarity to the correct answer
+- reduced trivial distractors
+- improved distractor plausibility
+
+## Current Status
+Prompt reformulations implemented locally.
+Full end-to-end DG evaluation using generated QG/RG outputs is currently running.
+
+# ⏳ Currently Running
+## Full QG LoRA Fine-Tuning
+Running:
+```bash
+bash finetune/train_qg_lora_local.sh
+```
+Configuration:
+- Qwen/Qwen-VL-Chat
+- LoRA fine-tuning
+- 1 epoch
+- RTX 3090
+
+Estimated Runtime:
+```text
+~10-12 hrs
+```
+
+# ⚠️ Notes
+Due to compute and runtime limitations, some experiments are still in progress. Current work focuses on achieving a fully reproducible local CoE pipeline and improving distractor generation quality.
