@@ -398,33 +398,92 @@ Generated Question:
 "What information supports the conclusion that the snoring is loud?"
 ```
 
-## ⏳ Currently Running
-### Full Validation of QG Inference
+### ✔️ Full Validation of QG Inference
 
-Running:
+Completed:
 ```bash
 python infer_qg_local.py
 ```
 
-Output target:
+Generated Output:
 ```text
 infer/pred_validation_qg_local.json
 ```
 
-This stage generates validation set question predictions for downstream RG preparation and evaluation.
+Runtime = ~50 minutes
+
+Samples generated = 4241
+
+Example prediction:
+```text
+Input Answer:
+"The snoring is loud."
+
+Generated Question:
+"What information supports the conclusion that John is a snorer?"
+```
+
+The generated outputs are now used for downstream RG dataset preparation and evaluation.
+
+
+### ✔️ RG Dataset Preparation
+
+Successfully generated local RG validation dataset using generated QG outputs.
+Pipeline:
+```text
+QG predictions -> RG dataset construction
+```
+
+Generated file:
+```text
+data/ScienceQA_validation_rg_locak.json
+```
+
+Samples generated = 4241
+
+The dataset is used for downstream rationale generation (RG) fine-tuning and inference.
+
+## ⏳ Currently Running
+
+### Full Train-Set QG Inference
+
+Running:
+```bash
+python infer_qg_train_local.py
+```
+
+Output target:
+```text
+infer/pred_train_qg_local.json
+```
+Estimated Runtime: ~2-3 hrs
 
 ## ⏭️ Remaining Steps
 
-- [ ] Complete full validation QG inference
-- [ ] Prepare RG datasets using generated QG outputs
+- [x] Complete full validation QG inference
+- [x] Prepare RG validation datasets using generated QG outputs
+- [ ] Run full train-set QG inference
+- [ ] Prepare RG training dataset
 - [ ] Fine-tune RG model
 - [ ] Run RG inference
-- [ ] Prepare DG datasets
+- [ ] Prepare DG baseline datasets
 - [ ] Implement improved DG prompt variants
-- [ ] Run DG inference
+- [ ] Run DG baseline inference
+- [ ] Run DG improved inference
 - [ ] Evaluate BLEU-4 / METEOR / ROUGE-L / BLEURT
 - [ ] Compare baseline vs improved DG outputs
 - [ ] Finalize qualitative distractor comparisons
+
+## ⚠️ Semantic Drift Observation
+
+During local reproduction, we observed that generated questions occasionally preserved compatibility with the correct answer while changing the underlying educational objective of the original question.
+
+Example:
+- original question tested verbal irony
+- generated question shifted toward factual inference
+- answer remained technically correct
+
+This suggests that standard lexical evaluation metrics alone may not fully capture pedagogical fidelity in educational MCQ generation pipelines.
 
 # ⚠️ Notes
 Due to compute and runtime limitations, some experiments are still in progress. Current work focuses on achieving a fully reproducible local CoE pipeline and improving distractor generation quality.
