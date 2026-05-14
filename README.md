@@ -75,7 +75,13 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Set up Hugging Face authentication and confirmed model downloading/inference workflow
 - [x] Added reproducibility/setup documentation and .gitignore
 - [x] Began setup of authors’ CoE ScienceQA dataset and confirmed local dataset structure (train/, val/, test/, captions.json)
-- [x] Wrote Papers Methodology section in overleaf 
+- [x] Wrote Papers Methodology section in overleaf
+- [x] Reproduced Contextualized Exemplar Retrieval (CER) locally and generated relevant_question mappings for ScienceQA
+- [x] Reduced retrieval runtime from several hours to seconds through retrieval debugging and fixes
+- [x] Built local QG inference pipeline and generated full validation-set QG outputs
+- [x] Generated RG validation dataset using generated QG outputs
+- [x] Observed semantic drift where generated questions preserved answers but changed the educational objective
+- [x] Implementing DG prompt improvements for more plausible and semantically consistent distractors
 --- 
 # Installation Instructions: List dependencies and how to install them.
 ⚠️ Note: The original repository ([Github Repo](https://github.com/Luohh5/Chain-of-Exemplar)) is not directly reproducible. See below for all fixes applied.
