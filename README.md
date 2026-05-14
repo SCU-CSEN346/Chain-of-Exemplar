@@ -101,4 +101,56 @@ What is the force of gravity that attracts two objects with mass towards each ot
  - diversity (better distractors)
  - self-consistency
 
+-----------
+
+# 🔬 Local Full CoE Reproduction Progress (RTX 3090)
+
+## ✔️ Completed Steps
+
+### 1. Local Environment Setup
+Created isolated Python environment:
+```bash
+python3 -m venv coe_local
+source coe_local/bin/activate
+```
+
+Verified GPU access and name:
+```bash
+python -c "import torch; print(torch.cuda.is_available())"
+python -c "import torch; print(torch.cuda.get_device_name(0))"
+```
+
+Output:
+```text
+True
+NVIDIA GeForce RTX 3090
+```
+
+Installed compatible NumPy version:
+```bash
+pip install "numpy<2"
+```
+
+## ✔️ ScienceQA Dataset Build
+Generated reversed ScienceQA dataset locally:
+
+```bash
+python build_scienceqa_problems.py
+```
+
+Generated:
+```text
+data/scienceqa/problems.json
+```
+
+Dataset size:
+```text
+21208 samples
+```
+
+## ✔️ Contextualized Exemplar Retrieval (CER)
+
+### Original Issue
+The original retrieval pipeline had multiple issues:
+-
 
