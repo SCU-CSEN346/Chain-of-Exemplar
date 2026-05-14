@@ -19,9 +19,8 @@
 - [x] Update final README with baseline result
 - [x] Paper: Wrote section 6 (Paper Results) and updated other sections to be up to date with advances in project.
 - [x] Implement improvement - CER - attempt 1
-- [x] Implement improvement - CER - attempt 2 (waiting for full pipeline to run to see results)
+- [x] Implement improvement - CER - attempt 2 
 - [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
-- [ ] Remove any files on github that no longer are being used
 - [ ] Improve Readme for personal branch and main branch
 
 ---
@@ -922,7 +921,7 @@ The final full-test reproduction workflow is:
 # 9. Improvements
 
 This section documents the CER improvements explored beyond the original baseline pipeline.
-The current improvement experiments are implemented primarily in retrieve.py and were pushed to the josephine branch.
+The current improvement experiments are implemented primarily in `retrieve.py` and were pushed to the `josephine` branch.
 
 ## 9.1 Improvement 1a: CER retrieval refinement
 
@@ -956,9 +955,9 @@ This version was designed to improve semantic alignment between the input questi
 
 | Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
 |------|--------|--------|---------|--------|
-| QG   | complete | complete | complete  | complete |
-| RG   | complete | complete | complete  | complete |
-| DG   | complete | complete | complete  | complete |
+| QG   | 0.0355 | 0.2512 | 0.2524  | 0.3205 |
+| RG   | 0.6896 | 0.7375 | 0.7556  | 0.6908 |
+| DG   | 0.4313 | 0.7384 | 0.6156  | 0.5886 |
 
 ## 9.3 Important rerun dependency
 
