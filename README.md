@@ -82,6 +82,8 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Generated RG validation dataset using generated QG outputs
 - [x] Observed semantic drift where generated questions preserved answers but changed the educational objective
 - [x] Implementing DG prompt improvements for more plausible and semantically consistent distractors
+- [x] Completed section 7.3 (Improvement 3: Enhanced Distractor Generation) in the overleaf document
+- [x] Added to the Limitations and Ethics section of the document 
 --- 
 # Installation Instructions: List dependencies and how to install them.
 ⚠️ Note: The original repository ([Github Repo](https://github.com/Luohh5/Chain-of-Exemplar)) is not directly reproducible. See below for all fixes applied.
