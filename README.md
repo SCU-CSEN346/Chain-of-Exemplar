@@ -31,7 +31,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 ### OVERALL PROJECT STATUS: 
 - [ ] Finalize improvements
 - [ ] Finalize Github 
-- [ ] Finalize Paper 
+- [ ] Finalize Paper (Get under 6 pages!) 
 - [ ] Create Demo (maybe use the 1 sample scripts Josephine created - remember to change model to improved one)
 - [ ] Create Presentation 
 - [ ] Create Poster
