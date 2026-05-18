@@ -1,0 +1,17 @@
+[
+  {
+    "id": "identity_test_0",
+    "question": "Question: What is the name of the punctuation mark that shows possession?\nAnswer: apostrophe\nRefer to the following example, how to make a reasoning to answer the question based on the above question with its answer?\nExample:\nQuestion: Which figure of speech is used in this text?\nThou wast not born for death, immortal Bird!\n—John Keats, \"Ode to a Nightingale\"\nAnswer: apostrophe\nReasoning: Figures of speech are words or phrases that use language in a nonliteral or unusual way. They can make writing more expressive.\nAnaphora is the repetition of the same word or words at the beginning of several phrases or clauses.\nWe are united. We are powerful. We are winners.\nAntithesis involves contrasting opposing ideas within a parallel grammatical structure.\nI want to help, not to hurt.\nApostrophe is a direct address to an absent person or a nonhuman entity.\nOh, little bird, what makes you sing so beautifully?\nAssonance is the repetition of a vowel sound in a series of nearby words.\nTry to light the fire.\nChiasmus is an expression in which the second half parallels the first but reverses the order of words.\nNever let a fool kiss you or a kiss fool you.\nUnderstatement involves deliberately representing something as less serious or important than it really is.\nAs you know, it can get a little cold in the Antarctic.The text uses apostrophe, a direct address to an absent person or a nonhuman entity.\nImmortal Bird is a direct address to the bird, a nonhuman entity.\nThink step by step and answer the question at the beginning. Format your rationale in plain text.",
+    "best_rationale": "Do not format any questions correctly! Use only one sentence per line.\n\n\n\n\nFigures of Speech Are Words Or Phrases That Use Language In A NonLiteralOr Unusual Way. They Can Make Writing More Expressive.\nanaphore Is The Repetition Of The Same Word Or Words At The BeginningOf Several Phrases Or Clauses .\nweAre United . weare Powerful . wereewinners !\nantithasis Involved Contrasting Opposing Ideas Within An Parallel Grammatical Structure .\ni Want To Help , NotTo Hurt !",
+    "all_rationales": [
+      "Do not include any numbers from 1-5! Look below each sentence choice to see if there's one marked correct.\nLook over these examples before answering again.\n\n.docx file type icon.png",
+      "Do not include any figures of speech! Look back over each sentence carefully before moving forward.\n\nLook again at these sentences from page 130:\n\nThe dog chased after his owner's car keys.\nThis cat likes to eat fish better than chicken.\nHis parents' house was filled with furniture made out of wood.\nMy brother has two dogs named Maxie and Bucky who love him very much.\n —Kathleen Stengel, Reading Your World (2nd ed.)\nWhy do we need books? Because they give us pictures inside our heads.\nWhat does reading mean when people say things like “It’s just my imagination” about",
+      "Do not format any questions correctly! Use only one sentence per line.\n\n\n\n\nFigures of Speech Are Words Or Phrases That Use Language In A NonLiteralOr Unusual Way. They Can Make Writing More Expressive.\nanaphore Is The Repetition Of The Same Word Or Words At The BeginningOf Several Phrases Or Clauses .\nweAre United . weare Powerful . wereewinners !\nantithasis Involved Contrasting Opposing Ideas Within An Parallel Grammatical Structure .\ni Want To Help , NotTo Hurt !"
+    ],
+    "scores": [
+      -3.546875,
+      -3.640625,
+      -1.828125
+    ]
+  }
+]

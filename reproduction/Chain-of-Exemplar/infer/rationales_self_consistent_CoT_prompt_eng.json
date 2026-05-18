@@ -1,0 +1,17 @@
+[
+  {
+    "id": "identity_test_0",
+    "question": "Question: What is the name of the punctuation mark that shows possession?\nAnswer: apostrophe\nRefer to the following example, how to make a reasoning to answer the question based on the above question with its answer?\nExample:\nQuestion: Which figure of speech is used in this text?\nThou wast not born for death, immortal Bird!\n—John Keats, \"Ode to a Nightingale\"\nAnswer: apostrophe\nReasoning: Figures of speech are words or phrases that use language in a nonliteral or unusual way. They can make writing more expressive.\nAnaphora is the repetition of the same word or words at the beginning of several phrases or clauses.\nWe are united. We are powerful. We are winners.\nAntithesis involves contrasting opposing ideas within a parallel grammatical structure.\nI want to help, not to hurt.\nApostrophe is a direct address to an absent person or a nonhuman entity.\nOh, little bird, what makes you sing so beautifully?\nAssonance is the repetition of a vowel sound in a series of nearby words.\nTry to light the fire.\nChiasmus is an expression in which the second half parallels the first but reverses the order of words.\nNever let a fool kiss you or a kiss fool you.\nUnderstatement involves deliberately representing something as less serious or important than it really is.\nAs you know, it can get a little cold in the Antarctic.The text uses apostrophe, a direct address to an absent person or a nonhuman entity.\nImmortal Bird is a direct address to the bird, a nonhuman entity.\nLet's think step by step and remember to directly answer the question at the beginning.",
+    "best_rationale": "</div>\n<div id=\"answer\">\napostrophe\n</i>",
+    "all_rationales": [
+      "Look again! The sentence has two parts separated only be commas; we need another comma after the noun 'Bird'. Now there will have three separate sentences instead of one long run-on sentence.\nLook back over your notes from class about subject-verb agreement rules (or check out these online resources). Remember those? You'll see them next week when Mrs. Smith teaches us all kinds of new grammar lessons.\n:\n\nThe figures of speech were made up many years ago because people wanted their stories told better.\n\nWhich type does each item belong under?\n\na) figurative devices\n\nb) poetic terms\n\":\n\n\n\n\n\",",
+      "How do we find out whether these sentences contain figures? Look carefully through each sentence! Are there any examples of figurative expressions like metaphors (a comparison between two things), similes (an exact match using “like” instead of “as”), allusions (referring back to another story or poem), hyperbole (exaggeration) , paradoxical statements (words saying opposite things)? If yes then your passage contains one or many other types of figurative devices . So look again ! Do those parts include anything else besides literal meaning ? Can they be taken away from their context without losing sense ?\n:\n\n<https://www.shmo",
+      "</div>\n<div id=\"answer\">\napostrophe\n</i>"
+    ],
+    "scores": [
+      -3.234375,
+      -3.625,
+      -3.125
+    ]
+  }
+]

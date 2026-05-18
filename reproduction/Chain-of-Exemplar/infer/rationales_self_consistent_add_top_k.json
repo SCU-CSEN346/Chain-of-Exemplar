@@ -1,0 +1,17 @@
+[
+  {
+    "id": "identity_test_0",
+    "question": "Question: What is the name of the punctuation mark that shows possession?\nAnswer: apostrophe\nRefer to the following example, how to make a reasoning to answer the question based on the above question with its answer?\nExample:\nQuestion: Which figure of speech is used in this text?\nThou wast not born for death, immortal Bird!\n—John Keats, \"Ode to a Nightingale\"\nAnswer: apostrophe\nReasoning: Figures of speech are words or phrases that use language in a nonliteral or unusual way. They can make writing more expressive.\nAnaphora is the repetition of the same word or words at the beginning of several phrases or clauses.\nWe are united. We are powerful. We are winners.\nAntithesis involves contrasting opposing ideas within a parallel grammatical structure.\nI want to help, not to hurt.\nApostrophe is a direct address to an absent person or a nonhuman entity.\nOh, little bird, what makes you sing so beautifully?\nAssonance is the repetition of a vowel sound in a series of nearby words.\nTry to light the fire.\nChiasmus is an expression in which the second half parallels the first but reverses the order of words.\nNever let a fool kiss you or a kiss fool you.\nUnderstatement involves deliberately representing something as less serious or important than it really is.\nAs you know, it can get a little cold in the Antarctic.The text uses apostrophe, a direct address to an absent person or a nonhuman entity.\nImmortal Bird is a direct address to the bird, a nonhuman entity.",
+    "best_rationale": "Immortal means never dying and living forever; therefore, John refers to his nightingale using both adjectives (living) and nouns (bird). The phrase also creates emphasis because immortality has been associated throughout history only with gods and other supernatural beings.,\n\n\nWhat is the name?",
+    "all_rationales": [
+      "</ul>\n\n\nFigures of speech are used when writers and speakers try to create vivid imagery by using descriptions rather than literal facts about nature's beauty.\nThe world was made up entirely out of water until God decided he wanted land too! —Robert Frost, from his poem “Stopping By Woods On A Snowy Evening”\n——“Water” (1925)\n— (“Snow”) (1863)",
+      "Immortal means living forever; therefore, when we say Immortal Bird ,we mean John's nightingale from his poem Odes .This line has chiasmus because the two halves mirror each other and then reverse their meanings .\nThe poet says he was not meant (not fated)to die like most men do ; instead,he lived until 1820 ! He died before reaching age forty-four! Sothe speaker calls him ImmortalBird again : now without capital lettersthis time !\n:\n\nWhat does the underlined part indicate? Look back over your notes about figurative devices.\n\n\nThink carefully through these examples :",
+      "Immortal means never dying and living forever; therefore, John refers to his nightingale using both adjectives (living) and nouns (bird). The phrase also creates emphasis because immortality has been associated throughout history only with gods and other supernatural beings.,\n\n\nWhat is the name?"
+    ],
+    "scores": [
+      -3.75,
+      -3.390625,
+      -3.328125
+    ]
+  }
+]

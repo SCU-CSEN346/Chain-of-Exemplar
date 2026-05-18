@@ -9,7 +9,7 @@
 #SBATCH --mail-user=tkhambadkone@scu.edu
 #SBATCH --mail-type=END,FAIL
 
-bash finetune/run_fullcoe_lora_v100.sh
+#bash finetune/run_fullcoe_lora_v100.sh
 module purge
 module load Anaconda3
 module load CUDA/12.2.1
