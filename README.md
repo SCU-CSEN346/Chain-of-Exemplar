@@ -81,6 +81,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Extensive prompt engineering and hyperparameter tuning to make Qwen tokenizer compatible with self-consistency and reduce hallucinations at generation time
 - [x] Described self-consistency in paper (7.2)
 - [x] Began ethics discussion in paper (10)
+- [x] Implemented Accuracy metric scripts
 
 ### KAJAL - 33.3%: 
 - [x] First commit + Push of main papers github to this repo
