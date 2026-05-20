@@ -1,0 +1,24 @@
+===== QG =====
+[2026-05-17 15:20:04,379] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Detected standard inference file — extracting 'response' as hypothesis.
+Total:
+BLEU-4: 0.0452
+METEOR: 0.2379
+ROUGE-L: 0.2496
+BLEURT: 0.3083
+===== RG =====
+[2026-05-17 15:36:27,760] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Detected self-consistency rationales file — extracting 'best_rationale' as hypothesis.
+Total:
+BLEU-4: 0.0033
+METEOR: 0.1002
+ROUGE-L: 0.0722
+BLEURT: 0.3027
+===== DG =====
+[2026-05-17 15:53:54,556] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Detected standard inference file — extracting 'response' as hypothesis.
+Total:
+BLEU-4: 0.3512
+METEOR: 0.6743
+ROUGE-L: 0.5538
+BLEURT: 0.5265
