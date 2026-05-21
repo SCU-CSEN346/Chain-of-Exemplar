@@ -24,6 +24,7 @@
 - [x] Improve Readme for personal branch and main branch
 - [x] Merge my branch with main
 - [x] Paper: Contributed to the following sections: Final Results, Limitations, Conclusion
+- [x] Filmed and edited the demo
 
 ---
 
