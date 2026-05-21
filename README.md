@@ -62,7 +62,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Improve Readme for personal branch and main branch
 - [x] Merge my branch with main
 - [x] Paper: Contributed to the following sections: Final Results, Limitations, Conclusion
-- [x] Filmed and edited the coding demo 
+- [x] Filmed and edited the demo
 
 ### TARA - 33.3%: 
 - [x] Set up project in HPC
