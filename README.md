@@ -19,7 +19,40 @@
 - [x] Began ethics discussion in paper (10)
 - [x] Implemented Accuracy metric scripts
 
-## How to Run Inference on HPC
+## Repository Structure
+
+Key scripts:
+
+- `run_inference.py` → quickstart inference
+- `run_coe.slurm` → quickstart Slurm job
+- `build_scienceqa_problems.py` → ScienceQA dataset builder
+- `retrieve.py` → CER
+- `prepare_multitask.py` → multitask dataset builder
+- `slurm_fullcoe_lora.sbatch` → LoRA training job
+
+Full test-set pipeline:
+- `infer_qg_test_2ep.py` → full-test QG inference
+- `prepare_rg_test_2ep.py` → build RG full-test input from QG outputs
+- `infer_rg_test_2ep.py` → full-test RG inference (regular RG)
+- `infer_self_consistency.py` → self-consistency RG inference
+- `infer_self_consistency_parallel.py` → 2 GPU parallelized self-consistency RG inference
+- `infer_self_consistency_batch.py` → batch self-consistency RG inference
+- `prepare_dg_test_2ep.py` → build DG full-test input from QG + RG outputs
+- `infer_dg_test_2ep.py` → full-test DG inference
+- `scoring_local.py` → local LLM evaluation script
+- `scoring_accuracy.py` → accuracy score script
+- `run_infer_qg_test_2ep.slurm` → Slurm QG job
+- `slurm_infer_rg_2ep.sh` → Slurm RG job (regular RG)
+- `run_infer_self_consistency.slurm` → Slurm self-consistency RG job
+- `run_infer_self_consistency_parallel.slurm` → Slurm 2 GPU parallelized self-consistency RG job
+- `run_infer_self_consistency_batch.slurm` → Slurm batch self-consistency RG job
+- `slurm_infer_dg_2ep.sh` → Slurm DG job
+- `slurm_score_all_2ep.sh` → Slurm LLM metrics scoring job
+- `run_scoring_accuracy.sh` → Slurm Accuracy scoring job
+
+---
+
+## How to Run Quickstart Inference on HPC
 
 ### 1. Create a new conda environment
 ```bash
@@ -45,6 +78,7 @@ python -m pip install \
   matplotlib \
   tiktoken \
   transformers_stream_generator \
+  deepspeed==0.9.5 \
   "numpy<2"
 ```
 
@@ -150,3 +184,6 @@ cd /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Tara/Chain-of-Exemplar/reproductio
 sbatch run_coe.slurm
 ```
 See inference results in file `coe_infer_<BATCH_JOB_ID>.out` and error log in file `coe_infer_<BATCH_JOB_ID>.err`
+
+## How to Run Full Self-Consistency Pipeline on HPC
+
