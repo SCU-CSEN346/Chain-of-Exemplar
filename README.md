@@ -412,7 +412,7 @@ in a single batch script.
 We need to extract distractors from the test set before running Accuracy scoring:
 
 ```bash
-python extract_distractors.py
+python extract_distractors.py   --pred infer/pred_test_dg_2ep.json   --gt data/ScienceQA_test_dg_from_qg_rg_2ep.json   --output extracted_distractors.json
 ```
 
 This outputs the file `extracted_distractors.json`
