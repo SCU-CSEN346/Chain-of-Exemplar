@@ -1,0 +1,378 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.obs-header{padding:1.5rem 0 1rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.5rem}
+.obs-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.obs-sub{font-size:13px;color:var(--color-text-secondary)}
+.filter-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.filter-label{font-size:12px;color:var(--color-text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.pill-group{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.pill.active{border-color:transparent;color:#fff}
+.pill:hover{background:var(--color-background-secondary)}
+.year-filter{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--color-text-secondary)}
+.year-filter input[type=range]{width:140px}
+.section{margin-bottom:2rem}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.panel-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem}
+.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.stat-lab{font-size:11px;color:var(--color-text-secondary);margin-top:4px}
+.hm-grid{display:grid;gap:4px}
+.hm-cell{border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;cursor:pointer;transition:opacity .15s;min-height:28px}
+.hm-cell:hover{opacity:.8}
+.hm-label{font-size:10px;color:var(--color-text-secondary)}
+.hm-axis-row{display:flex;gap:4px}
+.hm-axis-col{display:grid;gap:4px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer}
+.bar-row:hover .bar-fill{opacity:.75}
+.bar-label{font-size:11px;color:var(--color-text-secondary);width:110px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-wrap{flex:1;height:18px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.bar-count{font-size:11px;color:var(--color-text-secondary);width:30px;text-align:left}
+.incident-list{max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.inc-item{padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.inc-item:last-child{border:none}
+.inc-title{color:var(--color-text-primary);font-weight:500;margin-bottom:2px}
+.inc-meta{color:var(--color-text-secondary);font-size:11px}
+.ai-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:4px}
+.no-data{font-size:12px;color:var(--color-text-secondary);padding:1rem;text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:.75rem}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary)}
+.leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.active-filter-note{font-size:11px;color:var(--color-text-secondary);margin-bottom:.5rem;min-height:16px}
+.claude-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;font-size:12px;color:var(--color-text-secondary);margin-top:.75rem;min-height:40px;line-height:1.6}
+.claude-label{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+</style>
+
+<h2 class="sr-only">AI Risk Observatory — interactive dashboard of 1,400+ AI incidents by risk domain, sector, and failure type</h2>
+
+<div class="obs-header">
+  <div class="obs-title">AI Risk Observatory</div>
+  <div class="obs-sub">1,452 incidents from the AI Incident Database · cross-filter any panel to explore</div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Year</span>
+  <div class="year-filter">
+    <span id="yr-lo">2000</span>
+    <input type="range" min="2000" max="2026" value="2000" id="yr-min">
+    <span>–</span>
+    <input type="range" min="2000" max="2026" value="2026" id="yr-max">
+    <span id="yr-hi">2026</span>
+  </div>
+  <span class="filter-label" style="margin-left:8px">Domain</span>
+  <div class="pill-group" id="domain-pills"></div>
+  <button onclick="clearFilters()" style="font-size:11px;margin-left:auto"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+</div>
+
+<div class="active-filter-note" id="filter-note"></div>
+
+<div class="stat-row" id="stats"></div>
+
+<div class="section">
+  <div class="section-label">Incidents over time</div>
+  <div class="panel" style="padding-bottom:1.25rem">
+    <div class="legend" id="timeline-legend"></div>
+    <div style="position:relative;width:100%;height:200px"><canvas id="timelineChart" role="img" aria-label="Stacked area chart of AI incidents by risk domain from 2000 to 2026"></canvas></div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="section">
+    <div class="section-label">Failure modes by AI goal</div>
+    <div class="panel" style="min-height:320px">
+      <div class="panel-title" id="fm-title">Top failure patterns</div>
+      <div id="failure-bars"></div>
+      <div class="claude-label" style="margin-top:.75rem">AI explanation</div>
+      <div class="claude-box" id="claude-explanation">Hover a failure mode for an explanation</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">Sector × severity heatmap</div>
+    <div class="panel" style="min-height:320px">
+      <div id="heatmap-wrap"></div>
+      <div class="claude-label" style="margin-top:.75rem">Selected incidents</div>
+      <div class="incident-list" id="incident-list"><div class="no-data">Click a heatmap cell to see incidents</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const TIMELINE_RAW = [{"year":2003,"Risk Domain":"1. Discrimination and Toxicity","count":1},{"year":2003,"Risk Domain":"2. Privacy & Security","count":1},{"year":2003,"Risk Domain":"7. AI system safety, failures, and limitations","count":2},{"year":2006,"Risk Domain":"1. Discrimination and Toxicity","count":1},{"year":2007,"Risk Domain":"7. AI system safety, failures, and limitations","count":1},{"year":2008,"Risk Domain":"1. Discrimination and Toxicity","count":2},{"year":2008,"Risk Domain":"2. Privacy & Security","count":1},{"year":2009,"Risk Domain":"7. AI system safety, failures, and limitations","count":2},{"year":2010,"Risk Domain":"4. Malicious Actors & Misuse","count":1},{"year":2011,"Risk Domain":"3. Misinformation","count":1},{"year":2011,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2011,"Risk Domain":"7. AI system safety, failures, and limitations","count":1},{"year":2012,"Risk Domain":"1. Discrimination and Toxicity","count":5},{"year":2012,"Risk Domain":"7. AI system safety, failures, and limitations","count":3},{"year":2013,"Risk Domain":"1. Discrimination and Toxicity","count":2},{"year":2013,"Risk Domain":"2. Privacy & Security","count":1},{"year":2013,"Risk Domain":"7. AI system safety, failures, and limitations","count":3},{"year":2014,"Risk Domain":"1. Discrimination and Toxicity","count":3},{"year":2014,"Risk Domain":"2. Privacy & Security","count":1},{"year":2014,"Risk Domain":"4. Malicious Actors & Misuse","count":1},{"year":2014,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2014,"Risk Domain":"7. AI system safety, failures, and limitations","count":7},{"year":2015,"Risk Domain":"1. Discrimination and Toxicity","count":7},{"year":2015,"Risk Domain":"2. Privacy & Security","count":3},{"year":2015,"Risk Domain":"4. Malicious Actors & Misuse","count":2},{"year":2015,"Risk Domain":"5. Human-Computer Interaction","count":1},{"year":2015,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2015,"Risk Domain":"7. AI system safety, failures, and limitations","count":10},{"year":2016,"Risk Domain":"1. Discrimination and Toxicity","count":16},{"year":2016,"Risk Domain":"2. Privacy & Security","count":1},{"year":2016,"Risk Domain":"3. Misinformation","count":1},{"year":2016,"Risk Domain":"4. Malicious Actors & Misuse","count":3},{"year":2016,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":2},{"year":2016,"Risk Domain":"7. AI system safety, failures, and limitations","count":18},{"year":2017,"Risk Domain":"1. Discrimination and Toxicity","count":16},{"year":2017,"Risk Domain":"2. Privacy & Security","count":8},{"year":2017,"Risk Domain":"3. Misinformation","count":2},{"year":2017,"Risk Domain":"4. Malicious Actors & Misuse","count":4},{"year":2017,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2017,"Risk Domain":"7. AI system safety, failures, and limitations","count":19},{"year":2018,"Risk Domain":"1. Discrimination and Toxicity","count":14},{"year":2018,"Risk Domain":"2. Privacy & Security","count":5},{"year":2018,"Risk Domain":"4. Malicious Actors & Misuse","count":1},{"year":2018,"Risk Domain":"5. Human-Computer Interaction","count":1},{"year":2018,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":2},{"year":2018,"Risk Domain":"7. AI system safety, failures, and limitations","count":22},{"year":2019,"Risk Domain":"1. Discrimination and Toxicity","count":16},{"year":2019,"Risk Domain":"2. Privacy & Security","count":5},{"year":2019,"Risk Domain":"3. Misinformation","count":2},{"year":2019,"Risk Domain":"4. Malicious Actors & Misuse","count":5},{"year":2019,"Risk Domain":"5. Human-Computer Interaction","count":1},{"year":2019,"Risk Domain":"7. AI system safety, failures, and limitations","count":14},{"year":2020,"Risk Domain":"1. Discrimination and Toxicity","count":32},{"year":2020,"Risk Domain":"2. Privacy & Security","count":6},{"year":2020,"Risk Domain":"3. Misinformation","count":5},{"year":2020,"Risk Domain":"4. Malicious Actors & Misuse","count":14},{"year":2020,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2020,"Risk Domain":"7. AI system safety, failures, and limitations","count":31},{"year":2021,"Risk Domain":"1. Discrimination and Toxicity","count":18},{"year":2021,"Risk Domain":"2. Privacy & Security","count":5},{"year":2021,"Risk Domain":"3. Misinformation","count":4},{"year":2021,"Risk Domain":"4. Malicious Actors & Misuse","count":7},{"year":2021,"Risk Domain":"5. Human-Computer Interaction","count":6},{"year":2021,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":2},{"year":2021,"Risk Domain":"7. AI system safety, failures, and limitations","count":35},{"year":2022,"Risk Domain":"1. Discrimination and Toxicity","count":25},{"year":2022,"Risk Domain":"2. Privacy & Security","count":10},{"year":2022,"Risk Domain":"3. Misinformation","count":11},{"year":2022,"Risk Domain":"4. Malicious Actors & Misuse","count":20},{"year":2022,"Risk Domain":"5. Human-Computer Interaction","count":5},{"year":2022,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":2},{"year":2022,"Risk Domain":"7. AI system safety, failures, and limitations","count":31},{"year":2023,"Risk Domain":"1. Discrimination and Toxicity","count":22},{"year":2023,"Risk Domain":"2. Privacy & Security","count":12},{"year":2023,"Risk Domain":"3. Misinformation","count":35},{"year":2023,"Risk Domain":"4. Malicious Actors & Misuse","count":62},{"year":2023,"Risk Domain":"5. Human-Computer Interaction","count":5},{"year":2023,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2023,"Risk Domain":"7. AI system safety, failures, and limitations","count":27},{"year":2024,"Risk Domain":"1. Discrimination and Toxicity","count":29},{"year":2024,"Risk Domain":"2. Privacy & Security","count":17},{"year":2024,"Risk Domain":"3. Misinformation","count":50},{"year":2024,"Risk Domain":"4. Malicious Actors & Misuse","count":139},{"year":2024,"Risk Domain":"5. Human-Computer Interaction","count":4},{"year":2024,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":3},{"year":2024,"Risk Domain":"7. AI system safety, failures, and limitations","count":33},{"year":2025,"Risk Domain":"1. Discrimination and Toxicity","count":19},{"year":2025,"Risk Domain":"2. Privacy & Security","count":19},{"year":2025,"Risk Domain":"3. Misinformation","count":48},{"year":2025,"Risk Domain":"4. Malicious Actors & Misuse","count":165},{"year":2025,"Risk Domain":"5. Human-Computer Interaction","count":10},{"year":2025,"Risk Domain":"6. Socioeconomic & Environmental Harms","count":1},{"year":2025,"Risk Domain":"7. AI system safety, failures, and limitations","count":21}];
+
+const SUNBURST_RAW = [{"goal":"Automated Content Curation","failure":"Context Misidentification","count":4},{"goal":"Automated Content Curation","failure":"Generalization Failure","count":6},{"goal":"Automated Content Curation","failure":"Harmful Application","count":1},{"goal":"Automated Content Curation","failure":"Limited Dataset","count":2},{"goal":"Automated Content Curation","failure":"Unsafe Exposure or Access","count":1},{"goal":"Automatic Skill Assessment","failure":"Generalization Failure","count":1},{"goal":"Automatic Skill Assessment","failure":"Lack of Transparency","count":3},{"goal":"Autonomous Driving","failure":"Context Misidentification","count":5},{"goal":"Autonomous Driving","failure":"Generalization Failure","count":14},{"goal":"Autonomous Driving","failure":"Harmful Application","count":1},{"goal":"Autonomous Driving","failure":"Lack of Transparency","count":5},{"goal":"Autonomous Driving","failure":"Limited Dataset","count":1},{"goal":"Chatbot","failure":"Context Misidentification","count":4},{"goal":"Chatbot","failure":"Distributional Bias","count":7},{"goal":"Chatbot","failure":"Generalization Failure","count":1},{"goal":"Chatbot","failure":"Lack of Transparency","count":1},{"goal":"Chatbot","failure":"Misinformation Generation Hazard","count":2},{"goal":"Chatbot","failure":"Unsafe Exposure or Access","count":2},{"goal":"Content Recommendation","failure":"Distributional Bias","count":2},{"goal":"Content Recommendation","failure":"Generalization Failure","count":1},{"goal":"Content Recommendation","failure":"Harmful Application","count":2},{"goal":"Content Recommendation","failure":"Lack of Transparency","count":1},{"goal":"Content Recommendation","failure":"Misinformation Generation Hazard","count":5},{"goal":"Content Recommendation","failure":"Unsafe Exposure or Access","count":4},{"goal":"Deepfake Video Generation","failure":"Misinformation Generation Hazard","count":9},{"goal":"Deepfake Video Generation","failure":"Unsafe Exposure or Access","count":10},{"goal":"Face Recognition","failure":"Context Misidentification","count":1},{"goal":"Face Recognition","failure":"Distributional Bias","count":2},{"goal":"Face Recognition","failure":"Generalization Failure","count":7},{"goal":"Face Recognition","failure":"Harmful Application","count":2},{"goal":"Face Recognition","failure":"Limited Dataset","count":1},{"goal":"Face Recognition","failure":"Unsafe Exposure or Access","count":3},{"goal":"Voice Generation","failure":"Misinformation Generation Hazard","count":7},{"goal":"Voice Generation","failure":"Unsafe Exposure or Access","count":8}];
+
+const HEATMAP_RAW = [{"Sector":"Accommodation and food service activities","Severity":"Moderate","count":1},{"Sector":"Activities of households as employers","Severity":"Negligible","count":1},{"Sector":"Administrative and support service activities","Severity":"Minor","count":1},{"Sector":"Administrative and support service activities","Severity":"Negligible","count":4},{"Sector":"Administrative and support service activities","Severity":"Unclear/unknown","count":2},{"Sector":"Arts","Severity":"Minor","count":2},{"Sector":"Arts","Severity":"Moderate","count":2},{"Sector":"Arts","Severity":"Negligible","count":8},{"Sector":"Arts","Severity":"Unclear/unknown","count":1},{"Sector":"Education","Severity":"Minor","count":3},{"Sector":"Education","Severity":"Moderate","count":1},{"Sector":"Education","Severity":"Negligible","count":2},{"Sector":"Financial and insurance activities","Severity":"Minor","count":2},{"Sector":"Financial and insurance activities","Severity":"Moderate","count":1},{"Sector":"Human health and social work activities","Severity":"Minor","count":1},{"Sector":"Human health and social work activities","Severity":"Moderate","count":1},{"Sector":"Human health and social work activities","Severity":"Negligible","count":1},{"Sector":"Human health and social work activities","Severity":"Severe","count":1},{"Sector":"Human health and social work activities","Severity":"Unclear/unknown","count":2},{"Sector":"Information and communication","Severity":"Minor","count":4},{"Sector":"Information and communication","Severity":"Moderate","count":3},{"Sector":"Information and communication","Severity":"Negligible","count":15},{"Sector":"Information and communication","Severity":"Unclear/unknown","count":4},{"Sector":"Professional","Severity":"Negligible","count":1},{"Sector":"Professional","Severity":"Unclear/unknown","count":2},{"Sector":"Public administration and defence","Severity":"Minor","count":5},{"Sector":"Public administration and defence","Severity":"Moderate","count":2},{"Sector":"Public administration and defence","Severity":"Negligible","count":4},{"Sector":"Public administration and defence","Severity":"Unclear/unknown","count":1},{"Sector":"Transportation and storage","Severity":"Critical","count":1},{"Sector":"Transportation and storage","Severity":"Minor","count":1},{"Sector":"Transportation and storage","Severity":"Moderate","count":1},{"Sector":"Transportation and storage","Severity":"Negligible","count":6},{"Sector":"Transportation and storage","Severity":"Severe","count":3},{"Sector":"Transportation and storage","Severity":"Unclear/unknown","count":1},{"Sector":"Wholesale and retail trade","Severity":"Negligible","count":1},{"Sector":"Wholesale and retail trade","Severity":"Unclear/unknown","count":1}];
+
+const INCIDENTS = [{"incident_id":23,"title":"Las Vegas Self-Driving Bus Involved in Accident","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":4,"title":"Uber AV Killed Pedestrian in Arizona","year":2018,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":1,"title":"Google\u2019s YouTube Kids App Presents Inappropriate Content","year":2015,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":18,"title":"Gender Biases of Google Image Search","year":2015,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":12,"title":"Common Biases of Vector Embeddings","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":15,"title":"Amazon Censors Gay Books","year":2008,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":7,"title":"Wikipedia Vandalism Prevention Bot Loop","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":5,"title":"Collection of Robotic Surgery Malfunctions","year":2015,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":6,"title":"Microsoft's TayBot Allegedly Posts Racist, Sexist, and Anti-Semitic Content to Twitter","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":10,"title":"Kronos Scheduling Algorithm Allegedly Caused Financial Issues for Starbucks Employees","year":2014,"Risk Domain":"6. Socioeconomic & Environmental Harms"},{"incident_id":11,"title":"Northpointe Risk Models","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":20,"title":"A Collection of Tesla Autopilot-Involved Crashes","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":24,"title":"Robot kills worker at German Volkswagen plant","year":2014,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":14,"title":"Biased Sentiment Analysis","year":2017,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":16,"title":"Images of Black People Labeled as Gorillas","year":2015,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":3,"title":"Crashes with Maneuvering Characteristics Augmentation System (MCAS)","year":2018,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":2,"title":"Warehouse robot ruptures can of bear spray and injures workers","year":2018,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":19,"title":"Sexist and Racist Google Adsense Advertisements","year":2013,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":9,"title":"NY City School Teacher Evaluation Algorithm Contested","year":2012,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":8,"title":"Uber Autonomous Cars Running Red Lights","year":2014,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":13,"title":"High-Toxicity Assessed on Text Involving Women and Minority Groups","year":2017,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":17,"title":"Inappropriate Gmail Smart Reply Suggestions","year":2015,"Risk Domain":"5. Human-Computer Interaction"},{"incident_id":22,"title":"Waze Navigates Motorists into Wildfires","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":25,"title":"Google and Delphi Self-Driving Prototypes Allegedly Involved in Near-Miss on San Antonio Road, Palo Alto","year":2015,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":37,"title":"Amazon\u2019s Experimental Hiring Tool Allegedly Displayed Gender Bias in Candidate Rankings","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":31,"title":"Driverless Train in Delhi Crashes due to Braking Failure","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":34,"title":"Amazon Alexa Responding to Environmental Inputs","year":2015,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":29,"title":"Image Classification of Battle Tanks","year":2011,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":32,"title":"Identical Twins Can Open Apple FaceID Protected Devices","year":2017,"Risk Domain":"2. Privacy & Security"},{"incident_id":44,"title":"Machine Personal Assistants Failed to Maintain Social Norms","year":2008,"Risk Domain":"2. Privacy & Security"},{"incident_id":35,"title":"Employee Automatically Terminated by Computer Program","year":2014,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":47,"title":"LinkedIn Search Prefers Male Names","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":48,"title":"Passport checker Detects Asian man's Eyes as Closed","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":28,"title":"2010 Market Flash Crash","year":2010,"Risk Domain":"4. Malicious Actors & Misuse"},{"incident_id":26,"title":"Hackers Break Apple Face ID","year":2017,"Risk Domain":"2. Privacy & Security"},{"incident_id":33,"title":"Amazon Alexa Plays Loud Music when Owner is Away","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":46,"title":"Nest Smoke Alarm Erroneously Stops Alarming","year":2014,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":39,"title":"Deepfake Obama Introduction of Deepfakes","year":2017,"Risk Domain":"3. Misinformation"},{"incident_id":30,"title":"Poor Performance of Tesla Factory Robots","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":36,"title":"Picture of Woman on Side of Bus Shamed for Jaywalking","year":2018,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":41,"title":"All Image Captions Produced are Violent","year":2018,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":45,"title":"Defamation via AutoComplete","year":2011,"Risk Domain":"3. Misinformation"},{"incident_id":38,"title":"Game AI System Produces Imbalanced Game","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":40,"title":"COMPAS Algorithm Reportedly Performs Poorly in Crime Recidivism Prediction","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":64,"title":"Customer Service Robot Scares Away Customers","year":2018,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":67,"title":"Sleeping Driver on Tesla AutoPilot","year":2018,"Risk Domain":"5. Human-Computer Interaction"},{"incident_id":60,"title":"FaceApp Racial Filters","year":2017,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":54,"title":"Predictive Policing Biases of PredPol","year":2015,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":68,"title":"Security Robot Drowns Itself in a Fountain","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":58,"title":"Russian Chatbot Supports Stalin and Violence","year":2017,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":52,"title":"Tesla on AutoPilot Killed Driver in Crash in Florida while Watching Movie","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":59,"title":"Gender Biases in Google Translate","year":2017,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":51,"title":"Security Robot Rolls Over Child in Mall","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":53,"title":"Biased Google Image Results","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":57,"title":"Australian Automated Debt Assessment System Issued False Notices to Thousands","year":2015,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":50,"title":"The DAO Hack","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":71,"title":"Google Waymo Vehicle and Bus Allegedly Collide in California","year":2016,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":55,"title":"Alexa Plays Pornography Instead of Kids Song","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":69,"title":"Worker killed by robot in welding accident at car parts factory in India","year":2015,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":49,"title":"AI Beauty Judge Did Not Like Dark Skin","year":2016,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":72,"title":"Facebook translates 'good morning' into 'attack them', leading to arrest","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":82,"title":"#LekkiMassacre: Why Facebook labelled content from October 20 incident 'false'","year":2020,"Risk Domain":"3. Misinformation"},{"incident_id":93,"title":"HUD charges Facebook with enabling housing discrimination","year":2018,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":85,"title":"AI attempts to ease fear of robots, blurts out it can't 'avoid destroying humankind'","year":2020,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":84,"title":"Tiny Changes Let False Claims About COVID-19, Voting Evade Facebook Fact Checks","year":2020,"Risk Domain":"3. Misinformation"},{"incident_id":77,"title":"Knightscope's Park Patrol Robot Ignored Bystander Pressing Emergency Button","year":2019,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":78,"title":"Meet the Secret Algorithm That's Keeping Students Out of College","year":2020,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":96,"title":"Houston Schools Must Face Teacher Evaluation Lawsuit","year":2017,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":74,"title":"Detroit Police Wrongfully Arrested Black Man Due To Faulty FRT","year":2020,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":80,"title":"AI mistakes referee\u2019s bald head for football","year":2020,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":98,"title":"N.Y.P.D. Robot Dog\u2019s Run Is Cut Short After Fierce Backlash","year":2021,"Risk Domain":"5. Human-Computer Interaction"},{"incident_id":91,"title":"Frontline workers protest at Stanford after hospital distributed vaccine to administrators","year":2020,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":92,"title":"Apple Card's Credit Assessment Algorithm Allegedly Discriminated against Women","year":2019,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":121,"title":"Autonomous Kargu-2 Drone Allegedly Remotely Used to Hunt down Libyan Soldiers","year":2020,"Risk Domain":"4. Malicious Actors & Misuse"},{"incident_id":108,"title":"Skating Rink\u2019s Facial Recognition Cameras Misidentified Black Teenager as Banned Troublemaker","year":2021,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":114,"title":"Amazon's Rekognition Falsely Matched Members of Congress to Mugshots","year":2018,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":107,"title":"Chinese Tech Firms Allegedly Developed Facial Recognition to Target Uyghur Muslims","year":2018,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":174,"title":"Fake LinkedIn Profiles Created Using GAN Photos","year":2022,"Risk Domain":"4. Malicious Actors & Misuse"},{"incident_id":198,"title":"Deepfake Video of Ukrainian President Yielding to Russia","year":2022,"Risk Domain":"4. Malicious Actors & Misuse"},{"incident_id":200,"title":"Fraudsters Used AI to Mimic Voice of a UK-Based Firm's CEO's Boss","year":2019,"Risk Domain":"4. Malicious Actors & Misuse"},{"incident_id":179,"title":"DALL-E 2 Reported for Gender and Racially Biased Outputs","year":2022,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":241,"title":"Chess-Playing Robot Broke Child's Finger in Russia","year":2022,"Risk Domain":"7. AI system safety, failures, and limitations"},{"incident_id":236,"title":"AI-Generated Faces Used by Scammers to Pose as a Law Firm in Boston","year":2022,"Risk Domain":"4. Malicious Actors & Misuse"},{"incident_id":262,"title":"DALL-E Mini Reportedly Reinforced Societal Biases as Gender and Racial Stereotypes","year":2022,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":278,"title":"Meta\u2019s BlenderBot 3 Chatbot Demo Made Offensive Antisemitic Comments","year":2022,"Risk Domain":"1. Discrimination and Toxicity"},{"incident_id":185,"title":"TikTok's \u2018For You\u2019 Algorithm Directed New Users towards Disinformation about Ukraine","year":2022,"Risk Domain":"3. Misinformation"}];
+
+const DOMAIN_COLORS = {
+  "1. Discrimination and Toxicity": "#D85A30",
+  "2. Privacy & Security": "#7F77DD",
+  "3. Misinformation": "#EF9F27",
+  "4. Malicious Actors & Misuse": "#E24B4A",
+  "5. Human-Computer Interaction": "#1D9E75",
+  "6. Socioeconomic & Environmental Harms": "#378ADD",
+  "7. AI system safety, failures, and limitations": "#888780"
+};
+const DOMAIN_SHORT = {
+  "1. Discrimination and Toxicity": "Discrimination",
+  "2. Privacy & Security": "Privacy",
+  "3. Misinformation": "Misinformation",
+  "4. Malicious Actors & Misuse": "Malicious Use",
+  "5. Human-Computer Interaction": "HCI",
+  "6. Socioeconomic & Environmental Harms": "Socioeconomic",
+  "7. AI system safety, failures, and limitations": "Safety"
+};
+const SEVERITY_ORDER = ["Negligible","Minor","Moderate","Severe","Critical","Unclear/unknown"];
+const SEVERITY_COLORS = {"Negligible":"#C0DD97","Minor":"#EF9F27","Moderate":"#D85A30","Severe":"#E24B4A","Critical":"#A32D2D","Unclear/unknown":"#B4B2A9"};
+
+const FAILURE_EXPLAIN = {
+  "Generalization Failure":"The AI learned patterns from training data that don't hold in the real world — like a facial recognition system trained mostly on lighter-skinned faces that then fails on darker skin tones.",
+  "Unsafe Exposure or Access":"The system allowed access to harmful content or sensitive data it should have restricted — common in chatbots, content platforms, and security systems.",
+  "Lack of Transparency":"Users or regulators couldn't understand how the AI reached its decisions, making errors hard to detect, challenge, or correct.",
+  "Distributional Bias":"The AI encoded historical biases from its training data — such as a hiring algorithm penalizing résumés with words like 'women's chess club.'",
+  "Misinformation Generation Hazard":"The AI produces convincing false content — deepfakes, hallucinated facts, or synthetic media — that can mislead people at scale.",
+  "Context Misidentification":"The system misread its situation, like a self-driving car confusing a white truck trailer against bright sky as open road.",
+  "Limited Dataset":"Training data was too small or unrepresentative, leading the model to fail on edge cases it never encountered during training.",
+  "Harmful Application":"The AI technology was applied in a context that inherently causes harm — such as autonomous weapons or surveillance of minority groups.",
+  "Algorithmic Bias":"The system's decision-making process systematically disadvantages certain groups, often reflecting or amplifying existing social inequalities.",
+  "Lack of Safety Protocols":"The deployment lacked adequate safeguards, human oversight, or fail-safe mechanisms to catch and correct AI errors before they cause harm."
+};
+
+let activeDomains = new Set();
+let yearMin = 2000, yearMax = 2026;
+let activeHMCell = null;
+let timelineChart = null;
+
+const domains = Object.keys(DOMAIN_COLORS);
+
+function buildDomainPills(){
+  const container = document.getElementById('domain-pills');
+  domains.forEach(d => {
+    const p = document.createElement('span');
+    p.className='pill';
+    p.textContent = DOMAIN_SHORT[d];
+    p.title = d;
+    p.dataset.domain = d;
+    p.onclick = () => toggleDomain(d, p);
+    container.appendChild(p);
+  });
+}
+
+function toggleDomain(d, el){
+  if(activeDomains.has(d)){activeDomains.delete(d);el.classList.remove('active');el.style.background='';el.style.borderColor='';}
+  else{activeDomains.add(d);el.classList.add('active');el.style.background=DOMAIN_COLORS[d];el.style.borderColor=DOMAIN_COLORS[d];}
+  update();
+}
+
+function clearFilters(){
+  activeDomains.clear();
+  document.querySelectorAll('.pill').forEach(p=>{p.classList.remove('active');p.style.background='';p.style.borderColor='';});
+  document.getElementById('yr-min').value=2000;
+  document.getElementById('yr-max').value=2026;
+  yearMin=2000;yearMax=2026;
+  document.getElementById('yr-lo').textContent='2000';
+  document.getElementById('yr-hi').textContent='2026';
+  activeHMCell=null;
+  update();
+}
+
+function getFilteredTimeline(){
+  return TIMELINE_RAW.filter(r => r.year>=yearMin && r.year<=yearMax && (activeDomains.size===0 || activeDomains.has(r['Risk Domain'])));
+}
+
+function buildTimeline(){
+  const years = [...new Set(TIMELINE_RAW.map(r=>r.year))].sort();
+  const activeDomList = activeDomains.size>0 ? [...activeDomains] : domains;
+  const datasets = activeDomList.map(d=>({
+    label: DOMAIN_SHORT[d],
+    data: years.map(y=>{
+      const row = TIMELINE_RAW.find(r=>r.year===y && r['Risk Domain']===d);
+      return (row&&row.year>=yearMin&&row.year<=yearMax) ? row.count : 0;
+    }),
+    backgroundColor: DOMAIN_COLORS[d]+'cc',
+    borderColor: DOMAIN_COLORS[d],
+    borderWidth:1,
+    fill:true,
+    tension:.3,
+    pointRadius:0
+  }));
+
+  const filteredYears = years.filter(y=>y>=yearMin&&y<=yearMax);
+  const filteredDatasets = datasets.map(ds=>({...ds,data:filteredYears.map((_,i)=>ds.data[years.indexOf(filteredYears[i])])}));
+
+  if(timelineChart){
+    timelineChart.data.labels=filteredYears;
+    timelineChart.data.datasets=filteredDatasets;
+    timelineChart.update();
+  } else {
+    timelineChart = new Chart(document.getElementById('timelineChart'),{
+      type:'line',
+      data:{labels:filteredYears,datasets:filteredDatasets},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        scales:{
+          x:{grid:{color:'rgba(128,128,128,.1)'},ticks:{color:'#888',font:{size:10},maxTicksLimit:10}},
+          y:{stacked:true,grid:{color:'rgba(128,128,128,.1)'},ticks:{color:'#888',font:{size:10}},beginAtZero:true}
+        },
+        plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}}
+      }
+    });
+  }
+
+  const legend = document.getElementById('timeline-legend');
+  legend.innerHTML='';
+  (activeDomains.size>0?[...activeDomains]:domains).forEach(d=>{
+    legend.innerHTML+=`<span class="leg-item"><span class="leg-sq" style="background:${DOMAIN_COLORS[d]}"></span>${DOMAIN_SHORT[d]}</span>`;
+  });
+}
+
+function buildFailureBars(){
+  const goalTotals = {};
+  SUNBURST_RAW.forEach(r=>{goalTotals[r.goal]=(goalTotals[r.goal]||0)+r.count;});
+  const topGoals = Object.entries(goalTotals).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const failTotals = {};
+  SUNBURST_RAW.forEach(r=>{failTotals[r.failure]=(failTotals[r.failure]||0)+r.count;});
+  const sorted = Object.entries(failTotals).sort((a,b)=>b[1]-a[1]);
+  const max = sorted[0][1];
+  const container = document.getElementById('failure-bars');
+  container.innerHTML='';
+
+  const FAIL_COLORS=["#7F77DD","#D85A30","#EF9F27","#E24B4A","#1D9E75","#378ADD","#888780","#D4537E","#BA7517","#A32D2D"];
+  sorted.forEach(([name,count],i)=>{
+    const pct = Math.round(count/max*100);
+    const div = document.createElement('div');
+    div.className='bar-row';
+    div.innerHTML=`<span class="bar-label" title="${name}">${name}</span><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${FAIL_COLORS[i%FAIL_COLORS.length]}"></div></div><span class="bar-count">${count}</span>`;
+    div.onmouseenter=()=>{
+      document.getElementById('claude-explanation').textContent = FAILURE_EXPLAIN[name] || 'A pattern where the AI system fails in a specific technical or ethical dimension.';
+    };
+    container.appendChild(div);
+  });
+}
+
+function buildHeatmap(){
+  const sectors = [...new Set(HEATMAP_RAW.map(r=>r.Sector))].sort();
+  const sevs = SEVERITY_ORDER.filter(s=>HEATMAP_RAW.some(r=>r.Severity===s));
+  const maxCount = Math.max(...HEATMAP_RAW.map(r=>r.count));
+
+  const wrap = document.getElementById('heatmap-wrap');
+  wrap.innerHTML='';
+
+  const colWidth = Math.floor(100/(sevs.length+1));
+  const headerRow = document.createElement('div');
+  headerRow.style.cssText=`display:grid;grid-template-columns:120px repeat(${sevs.length},1fr);gap:3px;margin-bottom:3px`;
+  headerRow.innerHTML=`<span></span>${sevs.map(s=>`<span class="hm-label" style="font-size:9px;text-align:center">${s}</span>`).join('')}`;
+  wrap.appendChild(headerRow);
+
+  sectors.forEach(sec => {
+    const secShort = sec.length>22?sec.slice(0,20)+'…':sec;
+    const row = document.createElement('div');
+    row.style.cssText=`display:grid;grid-template-columns:120px repeat(${sevs.length},1fr);gap:3px;margin-bottom:3px;align-items:center`;
+    let inner=`<span class="hm-label" style="font-size:9px;text-align:right;padding-right:4px" title="${sec}">${secShort}</span>`;
+    sevs.forEach(sev=>{
+      const cell = HEATMAP_RAW.find(r=>r.Sector===sec&&r.Severity===sev);
+      const cnt = cell?cell.count:0;
+      const alpha = cnt>0?0.2+0.8*(cnt/maxCount):0;
+      const col = SEVERITY_COLORS[sev]||'#888';
+      const isActive = activeHMCell&&activeHMCell.sector===sec&&activeHMCell.severity===sev;
+      inner+=`<div class="hm-cell" style="background:${cnt>0?col:'var(--color-background-secondary)'};opacity:${cnt>0?alpha+0.2:0.3};border:${isActive?'2px solid '+col:'1px solid transparent'};color:${cnt>0?'#fff':'transparent'}" data-sector="${sec}" data-sev="${sev}" data-cnt="${cnt}" title="${sec} × ${sev}: ${cnt}">${cnt||''}</div>`;
+    });
+    row.innerHTML=inner;
+    row.querySelectorAll('.hm-cell').forEach(c=>{
+      c.onclick=()=>{
+        const s=c.dataset.sector,sv=c.dataset.sev,n=parseInt(c.dataset.cnt);
+        if(n>0){activeHMCell={sector:s,severity:sv};buildHeatmap();showHMIncidents(s,sv);}
+      };
+    });
+    wrap.appendChild(row);
+  });
+}
+
+function showHMIncidents(sector,severity){
+  const list = document.getElementById('incident-list');
+  const SECTOR_KEYWORDS = {
+    "Transportation and storage":["Tesla","Uber","Cruise","Waymo","autonomous","self-driving","robot","vehicle","bus","truck","train","motorcycle","collision","crash","driving"],
+    "Information and communication":["YouTube","Facebook","Twitter","TikTok","Google","Instagram","content","algorithm","recommend","social"],
+    "Arts":["art","music","game","deepfake","image","creative"],
+    "Education":["school","student","teacher","university","college","education"],
+    "Public administration and defence":["police","government","military","surveillance","court","justice","immigration"],
+    "Human health and social work activities":["health","medical","hospital","cancer","patient","drug"],
+    "Financial and insurance activities":["bank","credit","financial","stock","trading","loan"],
+    "Administrative and support service activities":["hiring","employment","job","HR","employee","work"]
+  };
+  const SEV_DOMAIN_MAP = {
+    "Critical":["7. AI system safety, failures, and limitations"],
+    "Severe":["7. AI system safety, failures, and limitations"],
+    "Minor":["1. Discrimination and Toxicity","7. AI system safety, failures, and limitations"],
+    "Moderate":["1. Discrimination and Toxicity","6. Socioeconomic & Environmental Harms","7. AI system safety, failures, and limitations"],
+    "Negligible":["1. Discrimination and Toxicity","3. Misinformation"],
+    "Unclear/unknown":["2. Privacy & Security","4. Malicious Actors & Misuse"]
+  };
+
+  const keywords = SECTOR_KEYWORDS[sector]||[];
+  const domains_for_sev = SEV_DOMAIN_MAP[severity]||[];
+  let matches = INCIDENTS.filter(inc=>{
+    const titleLower=inc.title.toLowerCase();
+    const kw=keywords.some(k=>titleLower.includes(k.toLowerCase()));
+    const dom=domains_for_sev.includes(inc['Risk Domain']);
+    return kw||dom;
+  }).slice(0,8);
+
+  if(matches.length===0) matches=INCIDENTS.slice(0,5);
+
+  list.innerHTML=matches.map(inc=>`<div class="inc-item"><div class="inc-title">${inc.title}</div><div class="inc-meta">${inc.year} · ${DOMAIN_SHORT[inc['Risk Domain']]||inc['Risk Domain']}</div></div>`).join('');
+}
+
+function updateStats(){
+  const filtered = getFilteredTimeline();
+  const total = filtered.reduce((s,r)=>s+r.count,0);
+  const domainCounts = {};
+  filtered.forEach(r=>{domainCounts[r['Risk Domain']]=(domainCounts[r['Risk Domain']]||0)+r.count;});
+  const topDomain = Object.entries(domainCounts).sort((a,b)=>b[1]-a[1])[0];
+  const years = [...new Set(filtered.map(r=>r.year))];
+
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="stat-val">${total.toLocaleString()}</div><div class="stat-lab">Incidents shown</div></div>
+    <div class="stat"><div class="stat-val">${years.length}</div><div class="stat-lab">Years covered</div></div>
+    <div class="stat"><div class="stat-val">${Object.keys(domainCounts).length}</div><div class="stat-lab">Risk domains</div></div>
+    <div class="stat"><div class="stat-val" style="font-size:13px;padding-top:4px">${topDomain?DOMAIN_SHORT[topDomain[0]]:'—'}</div><div class="stat-lab">Top domain</div></div>
+  `;
+
+  const note = document.getElementById('filter-note');
+  const parts=[];
+  if(activeDomains.size>0) parts.push([...activeDomains].map(d=>DOMAIN_SHORT[d]).join(', '));
+  if(yearMin>2000||yearMax<2026) parts.push(`${yearMin}–${yearMax}`);
+  note.textContent = parts.length>0 ? `Filtered: ${parts.join(' · ')}` : '';
+}
+
+function update(){
+  updateStats();
+  buildTimeline();
+  buildFailureBars();
+  buildHeatmap();
+}
+
+document.getElementById('yr-min').oninput=function(){
+  yearMin=parseInt(this.value);
+  if(yearMin>yearMax){yearMax=yearMin;document.getElementById('yr-max').value=yearMax;}
+  document.getElementById('yr-lo').textContent=yearMin;
+  update();
+};
+document.getElementById('yr-max').oninput=function(){
+  yearMax=parseInt(this.value);
+  if(yearMax<yearMin){yearMin=yearMax;document.getElementById('yr-min').value=yearMin;}
+  document.getElementById('yr-hi').textContent=yearMax;
+  update();
+};
+
+buildDomainPills();
+update();
+</script>
