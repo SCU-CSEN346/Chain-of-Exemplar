@@ -1,0 +1,22 @@
+[
+  {
+    "id": "identity_validation_0",
+    "response": "(1) John is always tired.\n(2) John has a large nose.\n(3) John has a small nose."
+  },
+  {
+    "id": "identity_validation_1",
+    "response": "(1) alligator"
+  },
+  {
+    "id": "identity_validation_2",
+    "response": "(1) distractor one\n(2) distractor two\n(3) distractor three"
+  },
+  {
+    "id": "identity_validation_3",
+    "response": "(1) whether she added enough nutrients to help the bacteria produce 20% more glucose\n(2) whether she added enough nutrients to help the bacteria produce 20% more protein\n(3) whether she added enough nutrients to help the bacteria produce 20% more bacteria"
+  },
+  {
+    "id": "identity_validation_4",
+    "response": "(1) distractor one\n(2) distractor two\n(3) distractor three"
+  }
+]
