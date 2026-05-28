@@ -37,7 +37,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [ ] Create Poster
 
 
-### JOSEPHINE - 33.3%: 
+### JOSEPHINE: 
 - [x] Set up project in HPC with VSCODE
 - [x] Clone main branch to personal branch (Josephine)
 - [x] Environment setup
@@ -64,7 +64,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Paper: Contributed to the following sections: Final Results, Limitations, Conclusion
 - [x] Filmed and edited the demo
 
-### TARA - 33.3%: 
+### TARA: 
 - [x] Set up project in HPC
 - [x] Set up conda environment + documenting setup locally
 - [x] Working on getting baseline to work on HPC
@@ -83,7 +83,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Began ethics discussion in paper (10)
 - [x] Implemented Accuracy metric scripts
 
-### KAJAL - 33.3%: 
+### KAJAL: 
 - [x] First commit + Push of main papers github to this repo
 - [x] Not using HPC, Local WSL + GPU environment setup completed
 - [x] Completed the Abstract, Introduction, Chain-of-Thought Reasoning (2.3), and Multimodal Learning for Educational
