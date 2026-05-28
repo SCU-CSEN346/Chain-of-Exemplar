@@ -443,36 +443,262 @@ Samples generated = 4241
 
 The dataset is used for downstream rationale generation (RG) fine-tuning and inference.
 
-## ⏳ Currently Running
+### ✔️ Full Train-Set QG Inference
 
-### Full Train-Set QG Inference
-
-Running:
+Completed:
 ```bash
 python infer_qg_train_local.py
 ```
 
-Output target:
+Generated:
 ```text
 infer/pred_train_qg_local.json
 ```
-Estimated Runtime: ~2-3 hrs
+Runtime: ~2-3 hrs
+
+Samples generated = 12726
 
 ## ⏭️ Remaining Steps
 
 - [x] Complete full validation QG inference
 - [x] Prepare RG validation datasets using generated QG outputs
-- [ ] Run full train-set QG inference
-- [ ] Prepare RG training dataset
-- [ ] Fine-tune RG model
-- [ ] Run RG inference
-- [ ] Prepare DG baseline datasets
-- [ ] Implement improved DG prompt variants
-- [ ] Run DG baseline inference
-- [ ] Run DG improved inference
-- [ ] Evaluate BLEU-4 / METEOR / ROUGE-L / BLEURT
-- [ ] Compare baseline vs improved DG outputs
-- [ ] Finalize qualitative distractor comparisons
+- [x] Run full train-set QG inference
+- [x] Prepare RG training dataset
+- [x] Fine-tune RG model
+- [x] Run RG inference
+- [x] Prepare DG baseline datasets
+- [x] Implement improved DG prompt variants
+- [x] Run DG baseline inference
+- [x] Run DG improved inference
+- [x] Evaluate BLEU-4 / METEOR / ROUGE-L / BLEURT
+- [x] Compare baseline vs improved DG outputs
+- [x] Finalize qualitative distractor comparisons
+
+### ✔️ Full RG LoRA Fine-Tuning
+
+Successfully completed local RG LoRA fine-tuning using:
+
+```bash
+bash finetune/train_rg_lora_local.sh
+```
+
+Configuration:
+
+Qwen/Qwen-VL-Chat
+LoRA fine-tuning
+1 epoch
+RTX 3090
+
+Runtime: ~13 hrs
+
+Generated:
+```text
+output/rg_lora_local
+```
+
+### ✔️ RG Inference
+
+```markdown
+Completed local RG inference on:
+- validation split
+- training split
+```
+
+Generated:
+```text
+infer/pred_validation_rg_local.json
+infer/pred_train_rg_local.json
+```
+
+Validation samples generated: 4241
+Training samples generated: 12726
+
+Example rationale prediction:
+```text
+Maps have four cardinal directions, or main directions. Those directions are north, south, east, and west.
+A compass rose is a set of arrows that point to the cardinal directions.
+The north arrow points to the North Pole.
+West Virginia is farthest east.
+```
+The generated outputs were used for downstream DG dataset preparation.
+
+### ✔️ DG Baseline Dataset Preparation
+Pipeline:
+```text
+QG outputs -> RG outputs -> DG dataset preparation
+```
+
+Generated:
+```text
+data/ScienceQA_train_dg_baseline.json
+data/ScienceQA_validation_dg_baseline.json
+```
+
+Samples generated:
+```text
+Train = 12726
+Validation = 4241
+```
+
+Example DG prompt:
+```text
+Question: Which of these states is farthest east?
+Reasoning: Maps have four cardinal directions...
+Answer: West Virginia
+
+Generate plausible incorrect distractors.
+```
+
+### ✔️ DG Prompt Improvement Experiments
+Implemented multiple DG prompt-engineering variants to improve:
+
+- distractor diversity
+- grammatical consistency
+- semantic plausibility
+- multi-distractor generation
+
+Observed baseline DG issues:
+
+- single distractor generation
+- repetitive outputs
+- weak semantic distractors
+
+Implemented:
+```text
+prepare_dg_improved.py
+```
+
+Generated:
+```text
+data/ScienceQA_validation_dg_improved.json
+```
+
+### ✔️ DG LoRA Fine-Tuning
+Successfully completed local DG LoRA fine-tuning using:
+```bash
+bash finetune/train_dg_lora_local.sh
+```
+Configuration:
+
+Qwen/Qwen-VL-Chat
+LoRA fine-tuning
+1 epoch
+RTX 3090
+
+Runtime: ~12 hrs
+
+Generated:
+```text
+output/dg_lora_local
+```
+Training successfully verified:
+
+- DG dataset formatting
+- multimodal loading
+- LoRA adapter training
+- local end-to-end DG pipeline
+
+### ✔️ DG Baseline Inference
+Completed full DG baseline inference locally.
+
+Command:
+```bash
+python infer_dg_baseline.py
+```
+
+Generated:
+```text
+infer/pred_validation_dg_baseline_dgmodel.json
+```
+
+Validation samples generated: 4241
+
+Example baseline prediction:
+```text
+(1) John has a big nose.
+```
+
+### ✔️ DG Improved Prompt Inference
+Completed DG inference using modified prompt variants.
+
+Command:
+```bash
+python infer_dg_improved.py
+```
+
+Generated:
+```text
+infer/pred_validation_dg_improved_dgmodel.json
+```
+
+Observed behaviors:
+
+- improved distractor diversity in some cases
+- occasional template leakage
+- repeated distractors
+- mode collapse
+- placeholder outputs such as:
+- "answer one"
+- "..."
+- repeated tokens
+
+Example improved prediction:
+```text
+(1) whether the bacteria produced 20% more insulin
+(2) whether the bacteria produced 20% more protein
+(3) whether the bacteria produced 20% more glucose
+```
+
+### ✔️ DG Automatic Evaluation Metrics
+Evaluation performed using:
+```bash
+python scoring_local.py
+```
+Metrics computed:
+```text
+BLEU-4
+METEOR
+ROUGE-L
+BLEURT
+```
+
+DG Baseline Metrics:
+
+| Metric | Score |
+| -------- | -------- |
+| BLEU-4  | 0.3412  |
+| METEOR  | 0.6610 |
+| ROUGE-L  | 0.3412  |
+| BLEURT  | 0.5585 |
+
+DG Improved Prompt Metrics
+
+| Metric | Score |
+| -------- | -------- |
+| BLEU-4  | 0.0780  |
+| METEOR  | 0.3838 |
+| ROUGE-L  | 0.2877  |
+| BLEURT  | 0.4230 |
+
+### ✔️ DG Qualitative Comparison Study
+Generated qualitative comparison datasets between:
+
+- baseline DG outputs
+- improved DG outputs
+
+Generated files:
+```text
+results/dg_full_comparisons/
+```
+
+Observations:
+
+- some prompt variants improved distractor richness
+- overlap-based metrics degraded substantially
+- DG generation proved highly sensitive to prompt wording
+- lexical metrics may not fully capture distractor quality in educational MCQ generation
+
+⚠️ This experiment highlighted the instability of distractor generation under prompt reformulation.
 
 ## ⚠️ Semantic Drift Observation
 
@@ -487,3 +713,30 @@ This suggests that standard lexical evaluation metrics alone may not fully captu
 
 # ⚠️ Notes
 Due to compute and runtime limitations, some experiments are still in progress. Current work focuses on achieving a fully reproducible local CoE pipeline and improving distractor generation quality.
+
+## 📁 Important Files
+
+### Training Scripts
+- finetune/train_qg_lora_local.sh
+- finetune/train_rg_lora_local.sh
+- finetune/train_dg_lora_local.sh
+
+### Inference Scripts
+- infer_qg_local.py
+- infer_rg_local.py
+- infer_dg_baseline.py
+- infer_dg_improved.py
+
+### Dataset Preparation
+- prepare_qg.py
+- prepare_rg.py
+- prepare_dg.py
+- prepare_dg_improved.py
+
+### Evaluation
+- scoring_local.py
+
+### Results
+- results/dg_full_comparisons/
+- infer/pred_validation_dg_baseline_dgmodel.json
+- infer/pred_validation_dg_improved_dgmodel.json
