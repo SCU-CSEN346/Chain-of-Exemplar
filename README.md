@@ -88,14 +88,10 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Not using HPC, Local WSL + GPU environment setup completed
 - [x] Completed the Abstract, Introduction, Chain-of-Thought Reasoning (2.3), and Multimodal Learning for Educational
 NLP (2.5) subsections in the Related Work section in the overleaf document.
-- [x] Fixed broken requirements.txt and resolved multiple dependency and version conflicts
-- [x] Created run_baseline.py and successfully ran baseline GPU inference
-- [x] Replaced unavailable original base model with Qwen/Qwen-1_8B-Chat
+- [x] Resolved repository dependency/version conflicts
 - [x] Verified baseline text generation with sample prompt-output pair
 - [x] Added the installation instructions to the group ReadMe file 
-- [x] Set up Hugging Face authentication and confirmed model downloading/inference workflow
 - [x] Added reproducibility/setup documentation and .gitignore
-- [x] Began setup of authors’ CoE ScienceQA dataset and confirmed local dataset structure (train/, val/, test/, captions.json)
 - [x] Wrote Papers Methodology section in overleaf
 - [x] Reproduced Contextualized Exemplar Retrieval (CER) locally and generated relevant_question mappings for ScienceQA
 - [x] Reduced retrieval runtime from several hours to seconds through retrieval debugging and fixes
