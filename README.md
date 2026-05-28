@@ -105,6 +105,15 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Implementing DG prompt improvements for more plausible and semantically consistent distractors
 - [x] Completed section 7.3 (Improvement 3: Enhanced Distractor Generation) in the overleaf document
 - [x] Added to the Limitations and Ethics section of the document
+- [x] Completed full local RG LoRA fine-tuning and inference pipeline
+- [x] Prepared DG baseline datasets using generated QG and RG outputs
+- [x] Completed full DG LoRA fine-tuning locally on RTX 3090
+- [x] Implemented and tested multiple DG prompt-engineering variants for distractor generation
+- [x] Ran full DG baseline and improved inference experiments on the validation set
+- [x] Evaluated DG outputs using BLEU-4, METEOR, ROUGE-L, and BLEURT metrics
+- [x] Conducted qualitative comparison studies between baseline and improved DG outputs
+- [x] Observed prompt sensitivity, repetition, and semantic drift issues in DG generation
+- [x] Updated personal README with full local reproduction, DG experiments, and evaluation documentation
 
 ---
 
@@ -309,4 +318,33 @@ _To be added by Tara._
 
 ## Kajal
 
-_To be added by Kajal._
+Kajal’s improvement focused on Enhanced Distractor Generation (DG) through prompt engineering.
+
+The goal was to improve:
+- distractor diversity
+- semantic plausibility
+- grammatical consistency
+- multi-distractor generation
+
+Multiple DG prompt variants were implemented and evaluated locally using the full QG → RG → DG pipeline on an RTX 3090.
+
+Although several prompt variants occasionally produced richer and more diverse distractors qualitatively, the overall automatic evaluation metrics (BLEU-4, METEOR, ROUGE-L, BLEURT) degraded significantly compared to the baseline DG model.
+
+### DG Validation Metrics Comparison
+
+| Model | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+|---|---|---|---|---|
+| Baseline DG | 0.3412 | 0.6610 | 0.5585 | 0.5239 |
+| Improved DG Prompt | 0.0780 | 0.3838 | 0.2877 | 0.4230 |
+
+The prompt-engineering variants improved distractor diversity in select qualitative examples but reduced overall metric performance relative to the baseline DG model.
+
+Common failure modes observed during evaluation included:
+- repeated distractors
+- single-distractor collapse
+- placeholder generations such as “answer one”
+- template leakage
+- semantically weak distractors
+- excessive lexical overlap
+
+The experiments suggested that distractor generation in CoE is highly sensitive to prompt wording and decoding behavior. In several cases, prompts that encouraged diversity unintentionally reduced output stability and consistency. These results also highlighted a limitation of overlap-based evaluation metrics, which may not fully capture educational distractor quality or pedagogical usefulness.
