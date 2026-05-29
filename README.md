@@ -57,7 +57,8 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Update final README with baseline result
 - [x] Paper: Wrote section 6 (Paper Results) and updated other sections to be up to date with advances in project.
 - [x] Implement improvement - CER - attempt 1
-- [x] Implement improvement - CER - attempt 2 (waiting for full pipeline to run to see results)
+- [x] Implement improvement - CER - attempt 2
+- [x] Ran evaluation metrics for both attempt 1 and 2 at improving CER
 - [x] Paper: Wrote Section 7.1 (Improvement 1: Contextualized Exemplar Retrieval (CER))
 - [x] Improve Readme for personal branch and main branch
 - [x] Merge my branch with main
