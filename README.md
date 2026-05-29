@@ -1,12 +1,12 @@
 # Tara's README for Chain-of-Exemplar
 
 ## Table of Contents:
-1. [Personal Contributions] (#My Contributions Thus Far:)
-2. [Repository Structure] (#Repository Structure)
-3. [Quickstart Inference on HPC Guide] (#How to Run Quickstart Inference on HPC)
-4. [Full Self-Consistency Pipeline on HPC Guide] (#How to Run Full Self-Consistency Pipeline on HPC)
+1. [Personal Contributions](#My-Contributions-Thus-Far)
+2. [Repository Structure](#Repository-Structure)
+3. [Quickstart Inference on HPC Guide](#How-to-Run-Quickstart-Inference-on-HPC)
+4. [Full Self-Consistency Pipeline on HPC Guide](#How-to-Run-Full-Self-Consistency-Pipeline-on-HPC)
 
-## My Contributions Thus Far:
+## My Contributions Thus Far
 - [x] Set up project in HPC
 - [x] Set up conda environment + documenting setup locally
 - [x] Working on getting baseline to work on HPC
