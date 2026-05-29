@@ -25,6 +25,7 @@
 - [x] Merge my branch with main
 - [x] Paper: Contributed to the following sections: Final Results, Limitations, Conclusion
 - [x] Filmed and edited the demo
+- [x] Contributed to the poster presentation and powerpoint presentation
 
 ---
 
