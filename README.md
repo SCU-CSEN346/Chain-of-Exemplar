@@ -1,5 +1,11 @@
 # Tara's README for Chain-of-Exemplar
 
+## Table of Contents:
+1. [Personal Contributions] (#My Contributions Thus Far:)
+2. [Repository Structure] (#Repository Structure)
+3. [Quickstart Inference on HPC Guide] (#How to Run Quickstart Inference on HPC)
+4. [Full Self-Consistency Pipeline on HPC Guide] (#How to Run Full Self-Consistency Pipeline on HPC)
+
 ## My Contributions Thus Far:
 - [x] Set up project in HPC
 - [x] Set up conda environment + documenting setup locally
@@ -18,6 +24,11 @@
 - [x] Described self-consistency in paper (7.2)
 - [x] Began ethics discussion in paper (10)
 - [x] Implemented Accuracy metric scripts
+- [x] Ran Accuracy computation on baseline, CER 2, and self-consistency
+- [x] Running final self-consistency experiments with new hyperparameter configurations
+- [x] Contributed to Limitations section in slides and paper
+- [x] Edited Related Works section in paper according to earlier feedback
+- [x] Created self-consistency diagram
 
 ## Repository Structure
 
