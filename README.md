@@ -29,12 +29,12 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 ---
 # Member Contributions: 
 ### OVERALL PROJECT STATUS: 
-- [ ] Finalize improvements
-- [ ] Finalize Github 
-- [ ] Finalize Paper (Get under 6 pages!) 
+- [x] Finalize improvements
+- [x] Finalize Github 
 - [x] Create Demo (maybe use the 1 sample scripts Josephine created - remember to change model to improved one)
-- [ ] Create Presentation 
-- [ ] Create Poster
+- [ ] Finalize Paper (Get under 6 pages!) 
+- [ ] Finalize Presentation 
+- [ ] Finalize Poster
 
 
 ### JOSEPHINE: 
@@ -63,6 +63,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Merge my branch with main
 - [x] Paper: Contributed to the following sections: Final Results, Limitations, Conclusion
 - [x] Filmed and edited the demo
+- [x] Contributed to the poster presentation and powerpoint presentation
 
 ### TARA: 
 - [x] Set up project in HPC
