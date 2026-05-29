@@ -75,13 +75,18 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Following Josephine's setup to get inference to work on HPC
 - [x] Figured out how to run inference on HPC using simpler Conda setup
 - [x] Fixed Conda setup to work for LoRA fine-tuning on HPC
-- [x] Have baseline model running on HPC
+- [x] Got baseline model running on HPC
 - [x] Wrote Paper Evaluation section (5) in paper
 - [x] Wrote self-consistency rationale generation scripts (1 GPU, 2 GPUs, and batched/chunked)
 - [x] Extensive prompt engineering and hyperparameter tuning to make Qwen tokenizer compatible with self-consistency and reduce hallucinations at generation time
-- [x] Described self-consistency in paper (7.2)
+- [x] Described self-consistency theory and results in paper (7.2)
 - [x] Began ethics discussion in paper (10)
 - [x] Implemented Accuracy metric scripts
+- [x] Ran Accuracy computation on baseline, CER 2, and self-consistency
+- [x] Running final self-consistency experiments with new hyperparameter configurations
+- [x] Contributed to Limitations section in slides and paper
+- [x] Edited Related Works section in paper according to earlier feedback
+- [x] Created self-consistency diagram
 
 ### KAJAL: 
 - [x] First commit + Push of main papers github to this repo
