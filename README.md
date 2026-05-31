@@ -303,7 +303,7 @@ Josephine's improvement focused on the Contextualized Exemplar Retrieval (CER) s
 
 The best CER improvement run improved RG and DG compared with the baseline, while QG showed mixed results.
 
-| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+| Stage | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | BLEURT ↑ |
 |------|--------|--------|---------|--------|
 | QG | 0.0355 | 0.2512 | 0.2524 | 0.3205 |
 | RG | 0.6896 | 0.7375 | 0.7556 | 0.6908 |
@@ -317,7 +317,14 @@ Shared Improvement 1b checkpoint on WAVE:
 
 ## Tara
 
-_To be added by Tara._
+Tara's improvement focused on Self-Consistency, an extension of Chain-of-Thought prompting which samples multiple rationale paths and chooses the one that best leads to the correct answer, to reduce the impact of hallucinations in rationales on distractor generation.
+
+While Self-Consistency did not beat the baseline on LLM metrics, it did achieve a lower accuracy, which is good as it signifies that self-consistency generated more effective distractors.
+
+| Stage | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | BLEURT ↑ | Accuracy ↓ |
+|------|--------|--------|---------|--------|--------|
+| QG | - | - | - | - | - | - |
+| DG | 0.3512 | 0.6743 | 0.5538 | 0.5265 | 0.4049 |
 
 ## Kajal
 
