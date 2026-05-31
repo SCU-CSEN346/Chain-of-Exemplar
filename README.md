@@ -285,11 +285,11 @@ The prediction files are JSON lists with entries similar to:
 
 The 2-epoch LoRA baseline reproduced on the full ScienceQA test set produced:
 
-| Stage | BLEU-4 | METEOR | ROUGE-L | BLEURT |
-|------|--------|--------|---------|--------|
-| QG | 0.0431 | 0.2458 | 0.2505 | 0.3196 |
-| RG | 0.5572 | 0.6266 | 0.6381 | 0.6321 |
-| DG | 0.3931 | 0.6821 | 0.5891 | 0.5586 |
+| Stage | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | BLEURT ↑ | Accuracy ↓ |
+|------|--------|--------|---------|--------|--------|
+| QG | 0.0431 | 0.2458 | 0.2505 | 0.3196 | - |
+| RG | 0.5572 | 0.6266 | 0.6381 | 0.6321 | - |
+| DG | 0.3931 | 0.6821 | 0.5891 | 0.5586 | 0.4341 |
 
 ---
 
@@ -303,11 +303,10 @@ Josephine's improvement focused on the Contextualized Exemplar Retrieval (CER) s
 
 The best CER improvement run improved RG and DG compared with the baseline, while QG showed mixed results.
 
-| Stage | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | BLEURT ↑ |
-|------|--------|--------|---------|--------|
-| QG | 0.0355 | 0.2512 | 0.2524 | 0.3205 |
-| RG | 0.6896 | 0.7375 | 0.7556 | 0.6908 |
-| DG | 0.4313 | 0.7384 | 0.6156 | 0.5886 |
+| Stage | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | BLEURT ↑ |  Accuracy ↓ |
+|------|--------|--------|---------|--------|--------|
+| QG | 0.0355 | 0.2512 | 0.2524 | 0.3205 | - |
+| DG | 0.4313 | 0.7384 | 0.6156 | 0.5886 | 0.4388 |
 
 Shared Improvement 1b checkpoint on WAVE:
 
