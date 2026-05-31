@@ -342,7 +342,7 @@ Although several prompt variants occasionally produced richer and more diverse d
 
 ### DG Validation Metrics Comparison
 
-| Model | BLEU-4 | METEOR | ROUGE-L | BLEURT |
+| Model | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | BLEURT ↑ |
 |---|---|---|---|---|
 | Baseline DG | 0.3412 | 0.6610 | 0.5585 | 0.5239 |
 | Improved DG Prompt | 0.0780 | 0.3838 | 0.2877 | 0.4230 |
