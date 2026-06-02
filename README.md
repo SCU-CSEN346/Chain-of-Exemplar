@@ -33,8 +33,8 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Finalize Github 
 - [x] Create Demo (maybe use the 1 sample scripts Josephine created - remember to change model to improved one)
 - [ ] Finalize Paper (Get under 6 pages!) 
-- [ ] Finalize Presentation 
-- [ ] Finalize Poster
+- [x] Finalize Presentation 
+- [x] Finalize Poster
 
 
 ### JOSEPHINE: 
