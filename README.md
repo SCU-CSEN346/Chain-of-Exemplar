@@ -89,6 +89,7 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Contributed to Limitations section in slides and paper
 - [x] Edited Related Works section in paper according to earlier feedback
 - [x] Created self-consistency diagram
+- [x] Contributed to the poster presentation and powerpoint presentation
 
 ### KAJAL: 
 - [x] First commit + Push of main papers github to this repo
