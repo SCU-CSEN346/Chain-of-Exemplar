@@ -29,6 +29,7 @@
 - [x] Contributed to Limitations section in slides and paper
 - [x] Edited Related Works section in paper according to earlier feedback
 - [x] Created self-consistency diagram
+- [x] Contributed to the poster presentation and powerpoint presentation
 
 ## Repository Structure
 
