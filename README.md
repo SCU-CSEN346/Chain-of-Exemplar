@@ -118,6 +118,8 @@ NLP (2.5) subsections in the Related Work section in the overleaf document.
 - [x] Conducted qualitative comparison studies between baseline and improved DG outputs
 - [x] Observed prompt sensitivity, repetition, and semantic drift issues in DG generation
 - [x] Updated personal README with full local reproduction, DG experiments, and evaluation documentation
+- [x] Contributed to the poster presentation and powerpoint presentation
+
 
 ---
 
