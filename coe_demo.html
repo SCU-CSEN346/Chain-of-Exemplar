@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoE MCQ Evaluator — Maryland Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0e;
+    --paper: #f5f2eb;
+    --paper-dark: #eae6db;
+    --ruled: #d4cfc3;
+    --accent: #c85a2a;
+    --accent-light: #f5e8e0;
+    --green: #2a6b3c;
+    --green-light: #e2f0e6;
+    --muted: #7a756b;
+    --tab-w: 220px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--tab-w);
+    min-height: 100vh;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .sidebar-logo {
+    padding: 2rem 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logo .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+  }
+  .sidebar-logo h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .sidebar-logo h1 em {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.28);
+    padding: 1.4rem 1.5rem 0.6rem;
+  }
+
+  .tab-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.85rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .tab-btn::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.15s;
+    border-radius: 0 2px 2px 0;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.04); }
+  .tab-btn.active { background: rgba(255,255,255,0.07); }
+  .tab-btn.active::before { transform: scaleY(1); }
+
+  .tab-btn .tab-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.15s;
+  }
+  .tab-btn.active .tab-name { color: #fff; }
+  .tab-btn .tab-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.22);
+    transition: color 0.15s;
+  }
+  .tab-btn.active .tab-sub { color: rgba(255,255,255,0.45); }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: rgba(255,255,255,0.2);
+    line-height: 1.6;
+  }
+
+  /* ── Main ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .top-bar {
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid var(--ruled);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top-bar .model-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .top-bar .model-tag span {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .reset-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--ruled);
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  .content {
+    flex: 1;
+    padding: 3rem;
+    max-width: 760px;
+  }
+
+  /* ── Question ── */
+  .question-block {
+    margin-bottom: 2.5rem;
+  }
+  .question-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .question-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.85rem;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+
+  /* ── Options ── */
+  .options-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: #fff;
+    border: 1.5px solid var(--ruled);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--ink);
+    transform: translateX(3px);
+  }
+  .option-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    background: var(--paper-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--muted);
+    transition: all 0.18s;
+  }
+  .option-btn:hover:not(:disabled) .option-key {
+    background: var(--ink);
+    color: #fff;
+  }
+  .option-btn.correct {
+    border-color: var(--green);
+    background: var(--green-light);
+    cursor: default;
+    transform: none;
+  }
+  .option-btn.correct .option-key {
+    background: var(--green);
+    color: #fff;
+  }
+  .option-btn.wrong {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    cursor: default;
+    opacity: 0.7;
+    transform: none;
+  }
+  .option-btn.wrong .option-key {
+    background: var(--accent);
+    color: #fff;
+  }
+  .option-btn:disabled { cursor: default; }
+  .option-btn.revealed-correct {
+    border-color: var(--green);
+    background: var(--green-light);
+    cursor: default;
+  }
+  .option-btn.revealed-correct .option-key {
+    background: var(--green);
+    color: #fff;
+  }
+
+  .result-badge {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .result-badge.correct-badge {
+    background: var(--green);
+    color: #fff;
+  }
+  .result-badge.wrong-badge {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── Divider ── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--ruled);
+    margin: 2rem 0;
+  }
+
+  /* ── Rationale ── */
+  .rationale-section {
+    display: none;
+    animation: fadeUp 0.35s ease forwards;
+  }
+  .rationale-section.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .rationale-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+  }
+  .rationale-header .rh-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .rationale-header .rh-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--paper-dark);
+    color: var(--muted);
+    border: 1px solid var(--ruled);
+  }
+
+  /* Self-consistency rationale cards */
+  .sc-rationales {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .sc-rat-card {
+    border: 1.5px solid var(--ruled);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    transition: border-color 0.2s;
+  }
+  .sc-rat-card.selected {
+    border-color: var(--green);
+    background: #fff;
+  }
+  .sc-rat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--paper-dark);
+    border-bottom: 1px solid var(--ruled);
+  }
+  .sc-rat-card.selected .sc-rat-card-header {
+    background: var(--green-light);
+    border-bottom-color: rgba(42,107,60,0.2);
+  }
+  .sc-rat-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .sc-rat-card.selected .sc-rat-num { color: var(--green); }
+  .sc-selected-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--green);
+    color: #fff;
+    margin-left: auto;
+  }
+  .sc-rejected-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--paper-dark);
+    color: var(--muted);
+    border: 1px solid var(--ruled);
+    margin-left: auto;
+  }
+  .sc-rat-body {
+    padding: 12px 14px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .sc-rat-card:not(.selected) .sc-rat-body {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Single rationale box */
+  .rationale-box {
+    background: #fff;
+    border: 1.5px solid var(--ruled);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+    border-left: 4px solid var(--ink);
+  }
+
+  /* ── Score area ── */
+  .score-note {
+    display: none;
+    margin-top: 1.5rem;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    font-style: italic;
+    color: var(--muted);
+    background: var(--paper-dark);
+    border: 1px solid var(--ruled);
+  }
+  .score-note.visible { display: block; }
+
+  /* ── Info pills at bottom ── */
+  .info-strip {
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--ruled);
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    background: var(--paper);
+    margin-top: auto;
+  }
+  .info-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .info-pill .ip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .info-pill .ip-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .sidebar { width: 180px; }
+    :root { --tab-w: 180px; }
+    .content { padding: 1.5rem; }
+    .top-bar { padding: 1rem 1.5rem; }
+    .question-text { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="eyebrow">CoE Evaluator</div>
+    <h1>MCQ<br><em>Variants</em></h1>
+  </div>
+
+  <div class="sidebar-label">Model Configuration</div>
+
+  <button class="tab-btn active" data-tab="baseline" onclick="switchTab('baseline')">
+    <span class="tab-name">Baseline</span>
+    <span class="tab-sub">2-epoch LoRA · greedy</span>
+  </button>
+  <button class="tab-btn" data-tab="cer" onclick="switchTab('cer')">
+    <span class="tab-name">CER Improvement</span>
+    <span class="tab-sub">answer–question–context</span>
+  </button>
+  <button class="tab-btn" data-tab="sc" onclick="switchTab('sc')">
+    <span class="tab-name">Self-Consistency</span>
+    <span class="tab-sub">k=3 · cross-entropy</span>
+  </button>
+  <button class="tab-btn" data-tab="enhanced" onclick="switchTab('enhanced')">
+    <span class="tab-name">Enhanced DG</span>
+    <span class="tab-sub">prompt engineering</span>
+  </button>
+
+  <div class="sidebar-footer">
+    CSEN 346 · Spring 2026<br>
+    SCU WAVE HPC · V100 32 GB<br>
+    ScienceQA test set
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="top-bar">
+    <div class="model-tag">Qwen-VL-Chat · <span id="tab-label">Baseline</span></div>
+    <button class="reset-btn" onclick="resetQuiz()">↺ Reset</button>
+  </div>
+
+  <div class="content">
+    <!-- Question -->
+    <div class="question-block">
+      <div class="question-eyebrow">Question · Social Science · Geography</div>
+      <div class="question-text">Which city is the capital of Maryland?</div>
+    </div>
+
+    <!-- Options -->
+    <div class="options-label">Select the correct answer</div>
+    <div class="options-list" id="options-list"></div>
+
+    <!-- Score note -->
+    <div class="score-note" id="score-note"></div>
+
+    <hr class="section-divider">
+
+    <!-- Rationale -->
+    <div class="rationale-section" id="rationale-section">
+      <div class="rationale-header">
+        <span class="rh-label">Rationale</span>
+        <span class="rh-tag" id="rh-tag">generated</span>
+      </div>
+      <div id="rationale-content"></div>
+    </div>
+  </div>
+
+  <!-- Info strip -->
+  <div class="info-strip">
+    <!-- <div class="info-pill">
+      <span class="ip-label">Correct Answer</span>
+      <span class="ip-val">Annapolis</span>
+    </div> -->
+    <div class="info-pill">
+      <span class="ip-label">Distractors</span>
+      <span class="ip-val" id="info-n-distractors">—</span>
+    </div>
+    <div class="info-pill">
+      <span class="ip-label">Status</span>
+      <span class="ip-val" id="info-status">Awaiting answer</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CORRECT = 'Annapolis';
+
+  const VARIANTS = {
+    baseline: {
+      label: 'Baseline',
+      tag: 'baseline · greedy decoding',
+      distractors: ['Baltimore', 'Augusta', 'Montpelier'],
+      rationale: {
+        type: 'single',
+        text: 'This state is Maryland.'
+      },
+      note: 'Baseline rationale is minimal — just restates the state name without explaining the capital. Single-line rationale is a known limitation of the 2-epoch greedy-decoded model.'
+    },
+    cer: {
+      label: 'CER Improvement',
+      tag: 'answer–question–context retrieval',
+      distractors: ['Dover', 'Baltimore'],
+      rationale: {
+        type: 'single',
+        text: 'Annapolis is the capital of Maryland.'
+      },
+      note: 'CER retrieval produced only 2 distractors, forming a 3-option MCQ rather than 4. The rationale is more accurate than baseline but still brief. Skipped sample count was lower than baseline, meaning fewer generation failures overall.'
+    },
+    sc: {
+      label: 'Self-Consistency',
+      tag: 'k=3 sampling · cross-entropy selection',
+      distractors: ['Boston', 'Baltimore', 'Raleigh'],
+      rationale: {
+        type: 'sc',
+        all: [
+          {
+            id: 1,
+            selected: false,
+            text: 'Annapolis is known as "The State Capital." It was once named after Queen Anne but now it means anna (meaning \'annexation\') plus polis (\'city\'), which can be translated into \'Ann City\'. The city has been occupied since at least A.D. 1502 by Native Americans including the Nanticoke, Pocomoke, Assateague tribes. This place became an important harbor for tobacco trade from Africa when shipbuilding started here around the year 679 AD under Dutch rule; later British colonists would continue building ships there through much larger-scale construction efforts during colonial times up…'
+          },
+          {
+            id: 2,
+            selected: true,
+            text: 'Annapolis is an important city for many reasons. First, it has been home since before the American Revolution. Second, as shown below by our map (click here or tap anywhere within this green box), it lies along both coasts! Click any area listed on left-hand side bar beneath image to see where each state borders only one coast; you can also move around freely inside blue rectangle! Finally because these two states share some history together: Maryland gained independence from England first—on April Fool\'s Day! So when did Maryland become independent? It became free on July Fourth!'
+          },
+          {
+            id: 3,
+            selected: false,
+            text: 'Annapolis is one of five states named for Anne or Ann, which was Queen Anne Marie d\'Orleans (1572–98). In fact, every U.S. state name starting with an "A" except Alaska refers back to someone who bore this royal title. Maryland gained independence from Great Britain after winning the French & Indian War but only became part of America when King George III recognized American sovereignty at Versailles two years later during another war — WorldWarI! The British had captured Washington D.C., so they held onto several ports along our East Coast until we won!'
+          }
+        ]
+      },
+      note: 'All three sampled rationales contain hallucinations (679 AD Dutch shipbuilding, April Fool\'s Day independence, World War I). Self-consistency selected rationale #2 via cross-entropy scoring — the least-wrong rather than a genuinely correct explanation. Distractors (Boston, Baltimore, Raleigh) are all Eastern Seaboard cities, a notable improvement over the baseline\'s inclusion of Montpelier (Vermont) and Augusta (Maine).'
+    },
+    enhanced: {
+      label: 'Enhanced DG',
+      tag: 'prompt engineering · diversity constraints',
+      distractors: ['Washington, D.C.', 'Baltimore', 'New York'],
+      rationale: {
+        type: 'single',
+        text: 'Annapolis is the capital of Maryland.'
+      },
+      note: 'Enhanced DG prompt produced 3 geographically coherent Mid-Atlantic distractors. Washington, D.C. and New York are somewhat strong — both are major cities in the same region that students could confuse. But they are also very major cities which students could likely know are not in Maryland. Baltimore is a very strong distractor, however, as it is a major city in Maryland itself. NLP overlap metrics dropped substantially vs baseline, reflecting that these distractors diverge from the ground truth reference set rather than being lower quality.'
+    }
+  };
+
+  let currentTab = 'baseline';
+  let answered = false;
+  let shuffledOptions = [];
+
+  function seededShuffle(arr, seed) {
+    const a = [...arr];
+    let s = seed;
+    for (let i = a.length - 1; i > 0; i--) {
+      s = (s * 1664525 + 1013904223) & 0xffffffff;
+      const j = Math.abs(s) % (i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildOptions(tab) {
+    const v = VARIANTS[tab];
+    const seed = ['baseline','cer','sc','enhanced'].indexOf(tab) * 99 + 7;
+    const all = [CORRECT, ...v.distractors];
+    return seededShuffle(all, seed);
+  }
+
+  function renderOptions() {
+    const list = document.getElementById('options-list');
+    list.innerHTML = '';
+    const keys = ['A', 'B', 'C', 'D'];
+    shuffledOptions.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.setAttribute('data-value', opt);
+      btn.innerHTML = `
+        <span class="option-key">${keys[i]}</span>
+        <span class="option-text">${opt}</span>
+      `;
+      btn.addEventListener('click', () => handleAnswer(opt, btn));
+      list.appendChild(btn);
+    });
+    document.getElementById('info-n-distractors').textContent =
+      VARIANTS[currentTab].distractors.length + ' generated';
+  }
+
+  function handleAnswer(chosen, clickedBtn) {
+    if (answered) return;
+    answered = true;
+
+    const keys = ['A', 'B', 'C', 'D'];
+    const allBtns = document.querySelectorAll('.option-btn');
+
+    allBtns.forEach(btn => {
+      btn.disabled = true;
+      const val = btn.getAttribute('data-value');
+      if (val === CORRECT && val !== chosen) {
+        btn.classList.add('revealed-correct');
+        btn.innerHTML += `<span class="result-badge correct-badge">correct</span>`;
+      }
+    });
+
+    if (chosen === CORRECT) {
+      clickedBtn.classList.add('correct');
+      clickedBtn.innerHTML += `<span class="result-badge correct-badge">✓ correct</span>`;
+      document.getElementById('info-status').textContent = '✓ Correct';
+    } else {
+      clickedBtn.classList.add('wrong');
+      clickedBtn.innerHTML += `<span class="result-badge wrong-badge">✗ wrong</span>`;
+      document.getElementById('info-status').textContent = '✗ Incorrect';
+    }
+
+    showRationale();
+  }
+
+  function showRationale() {
+    const v = VARIANTS[currentTab];
+    const sec = document.getElementById('rationale-section');
+    const content = document.getElementById('rationale-content');
+    const tag = document.getElementById('rh-tag');
+    const note = document.getElementById('score-note');
+
+    tag.textContent = v.tag;
+
+    if (v.rationale.type === 'single') {
+      content.innerHTML = `<div class="rationale-box">${v.rationale.text}</div>`;
+    } else {
+      // Self-consistency: show all rationales + selected
+      let html = '<div class="sc-rationales">';
+      v.rationale.all.forEach(r => {
+        const cls = r.selected ? 'sc-rat-card selected' : 'sc-rat-card';
+        const badge = r.selected
+          ? `<span class="sc-selected-tag">▶ selected by cross-entropy</span>`
+          : `<span class="sc-rejected-tag">rejected</span>`;
+        html += `
+          <div class="${cls}">
+            <div class="sc-rat-card-header">
+              <span class="sc-rat-num">RATIONALE ${r.id}</span>
+              ${badge}
+            </div>
+            <div class="sc-rat-body">${r.text}</div>
+          </div>`;
+      });
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    sec.classList.add('visible');
+    note.textContent = v.note;
+    note.classList.add('visible');
+  }
+
+  function switchTab(tab) {
+    if (tab === currentTab && !answered) return;
+    currentTab = tab;
+    answered = false;
+
+    // Update sidebar
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    document.getElementById('tab-label').textContent = VARIANTS[tab].label;
+
+    // Hide rationale
+    document.getElementById('rationale-section').classList.remove('visible');
+    document.getElementById('score-note').classList.remove('visible');
+    document.getElementById('info-status').textContent = 'Awaiting answer';
+
+    shuffledOptions = buildOptions(tab);
+    renderOptions();
+  }
+
+  function resetQuiz() {
+    switchTab(currentTab);
+  }
+
+  // Init
+  shuffledOptions = buildOptions('baseline');
+  renderOptions();
+</script>
+</body>
+</html>
