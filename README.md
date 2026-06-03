@@ -30,6 +30,7 @@
 - [x] Edited Related Works section in paper according to earlier feedback
 - [x] Created self-consistency diagram
 - [x] Contributed to the poster presentation and powerpoint presentation
+- [x] Created interactive demo
 
 ## Repository Structure
 
