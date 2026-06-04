@@ -320,7 +320,7 @@ Shared Improvement 1b checkpoint on WAVE:
 /WAVE/projects/CSEN-346-Sp26/Group1/Group1_Josephine/Chain-of-Exemplar/reproduction/Chain-of-Exemplar/output/fullcoe_lora_v100_2ep_retrievalfix
 ```
 
-## Tara
+## Tara: Self-Consistency in Rationale Generation
 
 Tara's improvement focused on Self-Consistency, an extension of Chain-of-Thought prompting which samples multiple rationale paths and chooses the one that best leads to the correct answer, to reduce the impact of hallucinations in rationales on distractor generation.
 
@@ -331,7 +331,7 @@ While Self-Consistency did not beat the baseline on LLM metrics, it did achieve 
 | QG | - | - | - | - | - | - |
 | DG | 0.3512 | 0.6743 | 0.5538 | 0.5265 | 0.4049 |
 
-## Kajal
+## Kajal: Enhanced Distractor Generation
 
 Kajal’s improvement focused on Enhanced Distractor Generation (DG) through prompt engineering.
 
