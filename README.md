@@ -18,7 +18,7 @@ Option 2 - Improving upon Chain of Exemplar ([Luo et. al. 2024](https://aclantho
 
 This project aims to address the lack of generated question diversity and mitigate hallucinations in the Chain of Exemplar model through in-context unsupervised learning, self-consistency, and potentially other methods that we come across throughout the quarter.
 
-We are each working on a designated individual branch and will merge final aggregated changes at project milestones
+We each worked on a designated individual branch; the main branch reflects Josephine's work:
 - Josephine's branch: [https://github.com/SCU-CSEN346/Chain-of-Exemplar/tree/josephine]
 - Tara's branch: [https://github.com/SCU-CSEN346/Chain-of-Exemplar/tree/tara]
 - Kajal's branch: [https://github.com/SCU-CSEN346/Chain-of-Exemplar/tree/kajal]
@@ -90,7 +90,9 @@ We are using the ScienceQA dataset as modified by Luo et. al. for CoE: [CoE Scie
 - [x] Edited Related Works section in paper according to earlier feedback
 - [x] Created self-consistency diagram
 - [x] Contributed to the poster presentation and powerpoint presentation
-- [x] Created interactive demo
+- [x] Created web interactive demo
+- [x] Organized and added to Appendix sections
+- [x] Worked on shortening several sections of paper to fit page limit
 
 ### KAJAL: 
 - [x] First commit + Push of main papers github to this repo
