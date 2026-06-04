@@ -136,7 +136,7 @@
   }
 
   .top-bar {
-    padding: 1.5rem 3rem;
+    padding: 0.85rem 1.75rem;
     border-bottom: 1px solid var(--ruled);
     display: flex;
     align-items: center;
@@ -171,10 +171,54 @@
   }
   .reset-btn:hover { border-color: var(--ink); color: var(--ink); }
 
-  .content {
+  /* ── Two-column layout ── */
+  .content-wrapper {
     flex: 1;
-    padding: 3rem;
-    max-width: 760px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: auto 1fr;
+    gap: 0;
+    min-height: 0;
+  }
+
+  .content-left {
+    padding: 1.75rem 2rem 1.75rem 2rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--ruled);
+    min-width: 0;
+  }
+
+  .content-right {
+    padding: 1.75rem 1.75rem;
+    overflow-y: auto;
+    background: var(--paper-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .content-right-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 10px;
+    opacity: 0.35;
+    text-align: center;
+    padding: 2rem;
+  }
+  .content-right-placeholder .ph-icon {
+    font-size: 2rem;
+    margin-bottom: 4px;
+  }
+  .content-right-placeholder .ph-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.7;
   }
 
   /* ── Question ── */
@@ -191,7 +235,7 @@
   }
   .question-text {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.85rem;
+    font-size: 1.55rem;
     line-height: 1.35;
     color: var(--ink);
   }
@@ -302,12 +346,8 @@
     color: #fff;
   }
 
-  /* ── Divider ── */
-  .section-divider {
-    border: none;
-    border-top: 1px solid var(--ruled);
-    margin: 2rem 0;
-  }
+  /* ── Divider (hidden in two-col layout) ── */
+  .section-divider { display: none; }
 
   /* ── Rationale ── */
   .rationale-section {
@@ -442,7 +482,7 @@
 
   /* ── Info pills at bottom ── */
   .info-strip {
-    padding: 1.5rem 3rem;
+    padding: 0.9rem 2rem;
     border-top: 1px solid var(--ruled);
     display: flex;
     gap: 2rem;
@@ -469,16 +509,20 @@
   }
 
   /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .content-wrapper { grid-template-columns: 1fr; }
+    .content-right { border-top: 1px solid var(--ruled); background: var(--paper-dark); }
+  }
   @media (max-width: 700px) {
     .sidebar { width: 180px; }
     :root { --tab-w: 180px; }
-    .content { padding: 1.5rem; }
-    .top-bar { padding: 1rem 1.5rem; }
-    .question-text { font-size: 1.4rem; }
+    .content-left { padding: 1.25rem; }
+    .top-bar { padding: 0.75rem 1.25rem; }
+    .question-text { font-size: 1.25rem; }
   }
   /* ── Context Image ── */
   .context-image-card {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     border: 1.5px solid var(--ruled);
     border-radius: 10px;
     overflow: hidden;
@@ -512,11 +556,47 @@
   .context-image-card img {
     display: block;
     width: 100%;
-    max-height: 260px;
+    max-height: 200px;
     object-fit: contain;
     padding: 16px 20px;
     background: #fff;
   }
+
+  /* ── Right panel overrides ── */
+  .content-right .rationale-section {
+    margin-bottom: 0;
+  }
+  .content-right .score-note {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    font-size: 12.5px;
+  }
+  .content-right .rationale-box {
+    font-size: 13px;
+  }
+  .content-right .sc-rat-body {
+    font-size: 12.5px;
+  }
+
+  /* Make body and main not overflow so columns scroll independently */
+  body {
+    overflow: hidden;
+    height: 100vh;
+  }
+  .main {
+    overflow: hidden;
+    height: 100vh;
+  }
+  .content-wrapper {
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+  .content-left, .content-right {
+    height: 100%;
+    overflow-y: auto;
+  }
+
 </style>
 </head>
 <body>
@@ -561,7 +641,8 @@
     <button class="reset-btn" onclick="resetQuiz()">↺ Reset</button>
   </div>
 
-  <div class="content">
+  <div class="content-wrapper">
+  <div class="content-left">
     <!-- Context Image -->
     <figure class="context-image-card" aria-label="US map with Maryland highlighted">
       <div class="context-image-header">
@@ -581,10 +662,17 @@
     <div class="options-label">Select the correct answer</div>
     <div class="options-list" id="options-list"></div>
 
+  </div><!-- /content-left -->
+
+  <div class="content-right" id="content-right">
+    <!-- Right panel placeholder shown before answer -->
+    <div class="content-right-placeholder" id="right-placeholder">
+      <div class="ph-icon">◎</div>
+      <div class="ph-text">Select an answer<br>to see the rationale<br>and analysis</div>
+    </div>
+
     <!-- Score note -->
     <div class="score-note" id="score-note"></div>
-
-    <hr class="section-divider">
 
     <!-- Rationale -->
     <div class="rationale-section" id="rationale-section">
@@ -594,7 +682,8 @@
       </div>
       <div id="rationale-content"></div>
     </div>
-  </div>
+  </div><!-- /content-right -->
+  </div><!-- /content-wrapper -->
 
   <!-- Info strip -->
   <div class="info-strip">
@@ -625,7 +714,7 @@
         type: 'single',
         text: 'This state is Maryland.'
       },
-      note: 'Baseline rationale is minimal — just restates the state name without explaining the capital. Single-line rationale is a known limitation of the 2-epoch greedy-decoded model.'
+      note: 'The 2-epoch LoRA fine-tuned Qwen-VL-Chat model was run on the full ScienceQA test set. QG scored BLEU-4 0.0431 / METEOR 0.2458 / ROUGE-L 0.2505 / BLEURT 0.3196 — noticeably weaker than DG across all metrics. The rationale merely restates the question rather than providing chain-of-thought reasoning, and the baseline DG stage frequently produced only a single distractor or semantically weak repetitive distractors. Distractor accuracy (the fraction that fooled the evaluator QA model) was 0.4341. All three improvements are measured against these numbers.'
     },
     cer: {
       label: 'CER Improvement',
@@ -635,7 +724,7 @@
         type: 'single',
         text: 'Annapolis is the capital of Maryland.'
       },
-      note: 'CER retrieval produced only 2 distractors, forming a 3-option MCQ rather than 4. The rationale is more accurate than baseline but still brief. Skipped sample count was lower than baseline, meaning fewer generation failures overall.'
+      note: 'CER Attempt 2 (the stronger variant) replaced answer–question similarity with answer–question–context similarity, kept modality-based reranking, added complex duplicate-question and duplicate-answer filtering, and expanded the candidate pool from top-50 to top-500 exemplars. On DG it delivered the best NLP gains of all improvements: BLEU-4 +9.7%, METEOR +8.3%, ROUGE-L +5.4%, BLEURT +5.4% vs baseline. QG also improved on METEOR, ROUGE-L, and BLEURT, with only BLEU-4 dropping slightly. Distractor accuracy rose marginally to 0.4388, and fewer questions were skipped entirely (fewer empty distractors and pipeline failures). The main trade-off: modality-based reranking may have made image-based distractors slightly less challenging by retrieving overly similar exemplars.'
     },
     sc: {
       label: 'Self-Consistency',
@@ -661,7 +750,7 @@
           }
         ]
       },
-      note: 'All three sampled rationales contain hallucinations (679 AD Dutch shipbuilding, April Fool\'s Day independence, World War I). Self-consistency selected rationale #2 via cross-entropy scoring — the least-wrong rather than a genuinely correct explanation. Distractors (Boston, Baltimore, Raleigh) are all Eastern Seaboard cities, a notable improvement over the baseline\'s inclusion of Montpelier (Vermont) and Augusta (Maine).'
+      note: 'Qwen sampled k=3 rationales with temperature=0.7, top-p=0.95, top-k=20, repetition_penalty=1.4, max_new_tokens=128. Cross-entropy scoring selected the rationale whose continuation had the lowest loss given the correct answer — here Rationale #2, because its American-history framing anchored the answer geographically better than the world-history digressions in #1 and #3. All three still hallucinate (679 AD Dutch shipbuilding; April Fool\'s Day independence; World War I). NLP overlap metrics fell vs baseline (BLEU-4 −10.7%, ROUGE-L −6.0%) because the distractors diverged from the reference set — but distractor accuracy improved to 0.4049 (vs 0.4341), meaning the generated distractors were harder to fool. Self-consistency was most effective for no-context and text-based questions.'
     },
     enhanced: {
       label: 'Enhanced DG',
@@ -671,7 +760,7 @@
         type: 'single',
         text: 'Annapolis is the capital of Maryland.'
       },
-      note: 'Enhanced DG prompt produced 3 geographically coherent Mid-Atlantic distractors. Washington, D.C. and New York are somewhat strong — both are major cities in the same region that students could confuse. But they are also very major cities which students could likely know are not in Maryland. Baltimore is a very strong distractor, however, as it is a major city in Maryland itself. NLP overlap metrics dropped substantially vs baseline, reflecting that these distractors diverge from the ground truth reference set rather than being lower quality.'
+      note: 'The DG prompt was modified to explicitly request exactly 3 distractors, enforce grammatical consistency with the correct answer, encourage semantic proximity, and ban placeholder outputs (e.g. "answer one"). While the enhanced prompt occasionally succeeded — in one validation example it replaced two identical distractors with three distinct, grammatically parallel biology distractors — it also introduced failure modes: the model sometimes followed the format while producing meaningless placeholders. NLP metrics dropped sharply vs baseline (BLEU-4 −80.2%, METEOR −43.7%, ROUGE-L −51.2%, BLEURT −24.3%), evaluated on the validation set. This reflects that the DG model had already learned a strong single-distractor pattern during fine-tuning; prompt-only modifications at inference time were insufficient to override it. Retraining on a multi-distractor distribution is the recommended path forward.'
     }
   };
 
@@ -780,6 +869,7 @@
     sec.classList.add('visible');
     note.textContent = v.note;
     note.classList.add('visible');
+    document.getElementById('right-placeholder').style.display = 'none';
   }
 
   function switchTab(tab) {
@@ -793,10 +883,11 @@
     });
     document.getElementById('tab-label').textContent = VARIANTS[tab].label;
 
-    // Hide rationale
+    // Hide rationale, restore placeholder
     document.getElementById('rationale-section').classList.remove('visible');
     document.getElementById('score-note').classList.remove('visible');
     document.getElementById('info-status').textContent = 'Awaiting answer';
+    document.getElementById('right-placeholder').style.display = '';
 
     shuffledOptions = buildOptions(tab);
     renderOptions();
